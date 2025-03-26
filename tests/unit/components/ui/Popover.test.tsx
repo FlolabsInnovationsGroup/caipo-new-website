@@ -9,18 +9,79 @@ import {
 
 // Mock radix-ui popover
 jest.mock('@radix-ui/react-popover', () => ({
-  Root: ({ children }: any) => <div data-testid="popover-root">{children}</div>,
+  Root: ({ children, onOpenChange, open: controlledOpen }: any) => {
+    const rootRef = React.useRef<HTMLDivElement>(null)
+    const [isOpen, setIsOpen] = React.useState(controlledOpen || false)
+
+    React.useEffect(() => {
+      if (controlledOpen !== undefined) {
+        setIsOpen(controlledOpen)
+      }
+    }, [controlledOpen])
+
+    const handleOpenChange = (newOpen: boolean) => {
+      setIsOpen(newOpen)
+      onOpenChange?.(newOpen)
+    }
+
+    React.useEffect(() => {
+      if (rootRef.current) {
+        (rootRef.current as any).__root = { handleOpenChange }
+      }
+    }, [])
+
+    React.useEffect(() => {
+      const handleKeyDown = (event: KeyboardEvent) => {
+        if (event.key === 'Escape' && isOpen) {
+          handleOpenChange(false)
+        }
+      }
+      window.addEventListener('keydown', handleKeyDown)
+      return () => window.removeEventListener('keydown', handleKeyDown)
+    }, [isOpen])
+
+    React.useEffect(() => {
+      const handleClickOutside = (event: MouseEvent) => {
+        if (isOpen && event.target instanceof Node && !event.defaultPrevented) {
+          handleOpenChange(false)
+        }
+      }
+      document.addEventListener('click', handleClickOutside)
+      return () => document.removeEventListener('click', handleClickOutside)
+    }, [isOpen])
+
+    return (
+      <div ref={rootRef} data-testid="popover-root" data-state={isOpen ? 'open' : 'closed'}>
+        {typeof children === 'function' ? children({ open: isOpen }) : children}
+      </div>
+    )
+  },
   Trigger: ({ children, ...props }: any) => (
-    <button type="button" {...props}>
+    <button 
+      type="button" 
+      onClick={(e) => {
+        e.stopPropagation()
+        const root = e.currentTarget.closest('[data-testid="popover-root"]')
+        if (root) {
+          const isOpen = root.getAttribute('data-state') === 'open'
+          const rootComponent = (root as any).__root
+          rootComponent?.handleOpenChange?.(!isOpen)
+        }
+      }}
+      {...props}
+    >
       {children}
     </button>
   ),
-  Content: React.forwardRef(({ children, ...props }: any, ref: any) => (
+  Content: React.forwardRef(({ children, side, align, sideOffset, className, ...props }: any, ref: any) => (
     <div
       ref={ref}
       role="dialog"
       data-state={props['data-state']}
-      className={props.className}
+      data-side={side}
+      data-align={align}
+      data-side-offset={sideOffset}
+      className={className}
     >
       {children}
     </div>

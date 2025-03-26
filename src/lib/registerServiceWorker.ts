@@ -1,10 +1,63 @@
+// Event emitter for service worker status
+export const swStatusEmitter = new EventTarget();
+
+export type ServiceWorkerStatus = 'installing' | 'installed' | 'updating' | null;
+
+// Custom event for status updates
+export class ServiceWorkerStatusEvent extends Event {
+  constructor(public status: ServiceWorkerStatus) {
+    super('statuschange');
+  }
+}
+
 export async function registerServiceWorker() {
   if (typeof window === 'undefined' || !('serviceWorker' in navigator)) {
     return;
   }
 
   try {
+    // Emit initial status if service worker is already controlling the page
+    if (navigator.serviceWorker.controller) {
+      swStatusEmitter.dispatchEvent(new ServiceWorkerStatusEvent('installed'));
+      setTimeout(() => {
+        swStatusEmitter.dispatchEvent(new ServiceWorkerStatusEvent(null));
+      }, 3000);
+    }
+
     const registration = await navigator.serviceWorker.register('/sw.js');
+    
+    // Handle installation status
+    if (registration.installing) {
+      swStatusEmitter.dispatchEvent(new ServiceWorkerStatusEvent('installing'));
+      registration.installing.addEventListener('statechange', () => {
+        if (registration.active) {
+          swStatusEmitter.dispatchEvent(new ServiceWorkerStatusEvent('installed'));
+          setTimeout(() => {
+            swStatusEmitter.dispatchEvent(new ServiceWorkerStatusEvent(null));
+          }, 3000);
+        }
+      });
+    }
+
+    // Handle updates
+    registration.addEventListener('updatefound', () => {
+      const newWorker = registration.installing;
+      if (!newWorker) return;
+      
+      newWorker.addEventListener('statechange', () => {
+        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+          swStatusEmitter.dispatchEvent(new ServiceWorkerStatusEvent('updating'));
+          setTimeout(() => {
+            swStatusEmitter.dispatchEvent(new ServiceWorkerStatusEvent(null));
+          }, 3000);
+          
+          // New content is available, show update notification
+          if (confirm('New version available! Would you like to update?')) {
+            window.location.reload();
+          }
+        }
+      });
+    });
     
     // Register for background sync
     if ('sync' in registration && 'register' in (registration as any).sync) {
@@ -38,21 +91,6 @@ export async function registerServiceWorker() {
     
     // Log success
     console.log('Service Worker registered successfully:', registration.scope);
-    
-    // Handle updates
-    registration.addEventListener('updatefound', () => {
-      const newWorker = registration.installing;
-      if (!newWorker) return;
-      
-      newWorker.addEventListener('statechange', () => {
-        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-          // New content is available, show update notification
-          if (confirm('New version available! Would you like to update?')) {
-            window.location.reload();
-          }
-        }
-      });
-    });
     
     return registration;
   } catch (error) {

@@ -405,7 +405,7 @@ class MockRequest implements Request {
   readonly referrer: string;
   readonly referrerPolicy: ReferrerPolicy;
   readonly signal: AbortSignal;
-  readonly url: string;
+  private _url: string;
   readonly body: ReadableStream<Uint8Array> | null;
   readonly bodyUsed: boolean;
 
@@ -415,16 +415,20 @@ class MockRequest implements Request {
     this.destination = 'document';
     this.headers = new MockHeaders(init.headers);
     this.integrity = '';
-    this.keepalive = false;
+    this.keepalive = init.keepalive || false;
     this.method = init.method || 'GET';
     this.mode = init.mode || 'cors';
     this.redirect = init.redirect || 'follow';
-    this.referrer = '';
+    this.referrer = init.referrer || 'about:client';
     this.referrerPolicy = init.referrerPolicy || 'no-referrer';
     this.signal = init.signal || new AbortController().signal;
-    this.url = typeof input === 'string' ? input : input.toString();
+    this._url = typeof input === 'string' ? input : input.toString();
     this.body = null;
     this.bodyUsed = false;
+  }
+
+  get url(): string {
+    return this._url;
   }
 
   clone(): Request {

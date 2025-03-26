@@ -1,4 +1,5 @@
 import { Response } from 'node-fetch'
+import { NextResponse } from 'next/server'
 
 // Mock Response before importing Next.js modules
 global.Response = Response as any
@@ -9,14 +10,33 @@ import { POST as updateStatus } from '@/app/api/admin/early-access/update-status
 import { POST as updateBatch } from '@/app/api/admin/early-access/update-batch/route'
 import { NextRequest } from 'next/server'
 import { getServerSession } from 'next-auth'
-import { NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 
 // Mock next-auth
 jest.mock('next-auth')
-jest.mock('@/lib/prisma')
 
-describe('Early Access Management API', () => {
+// Mock prisma
+jest.mock('@/lib/prisma', () => ({
+  __esModule: true,
+  default: {
+    earlyAccessSignup: {
+      findMany: jest.fn(),
+      update: jest.fn(),
+      updateMany: jest.fn()
+    },
+    $transaction: jest.fn()
+  }
+}))
+
+// Mock NextResponse
+jest.mock('next/server', () => ({
+  ...jest.requireActual('next/server'),
+  NextResponse: {
+    json: (data: any, init?: ResponseInit) => new Response(JSON.stringify(data), init)
+  }
+}))
+
+describe('Admin Early Access API', () => {
   beforeEach(() => {
     jest.clearAllMocks()
   })
@@ -30,12 +50,23 @@ describe('Early Access Management API', () => {
 
       // Mock database query
       ;(prisma.earlyAccessSignup.findMany as jest.Mock).mockResolvedValue([
-        { id: 1, email: 'test1@example.com', status: 'pending' },
-        { id: 2, email: 'test2@example.com', status: 'approved' }
+        {
+          id: 1,
+          email: 'test@example.com',
+          status: 'pending'
+        }
       ])
 
       const response = await GET()
       expect(response.status).toBe(200)
+    })
+
+    it('returns 401 for unauthenticated users', async () => {
+      // Mock session
+      ;(getServerSession as jest.Mock).mockResolvedValue(null)
+
+      const response = await GET()
+      expect(response.status).toBe(401)
     })
   })
 
@@ -64,6 +95,22 @@ describe('Early Access Management API', () => {
       const response = await updateStatus(request)
       expect(response.status).toBe(200)
     })
+
+    it('returns 401 for unauthenticated users', async () => {
+      // Mock session
+      ;(getServerSession as jest.Mock).mockResolvedValue(null)
+
+      const request = new NextRequest('http://localhost:3000/api/admin/early-access/update-status', {
+        method: 'POST',
+        body: JSON.stringify({
+          id: 1,
+          status: 'approved'
+        })
+      })
+
+      const response = await updateStatus(request)
+      expect(response.status).toBe(401)
+    })
   })
 
   describe('POST /api/admin/early-access/update-batch', () => {
@@ -73,10 +120,11 @@ describe('Early Access Management API', () => {
         user: { email: 'admin@example.com' }
       })
 
-      // Mock database query
-      ;(prisma.earlyAccessSignup.updateMany as jest.Mock).mockResolvedValue({
-        count: 2
-      })
+      // Mock database transaction
+      ;(prisma.$transaction as jest.Mock).mockResolvedValue([
+        { id: 1, email: 'test1@example.com', status: 'approved' },
+        { id: 2, email: 'test2@example.com', status: 'approved' }
+      ])
 
       const request = new NextRequest('http://localhost:3000/api/admin/early-access/update-batch', {
         method: 'POST',
@@ -90,7 +138,7 @@ describe('Early Access Management API', () => {
       expect(response.status).toBe(200)
     })
 
-    it('handles invalid request body', async () => {
+    it('returns 400 for invalid request body', async () => {
       // Mock session
       ;(getServerSession as jest.Mock).mockResolvedValue({
         user: { email: 'admin@example.com' }
@@ -99,7 +147,7 @@ describe('Early Access Management API', () => {
       const request = new NextRequest('http://localhost:3000/api/admin/early-access/update-batch', {
         method: 'POST',
         body: JSON.stringify({
-          // Missing required fields
+          invalid: 'data'
         })
       })
 

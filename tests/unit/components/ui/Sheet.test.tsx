@@ -21,6 +21,10 @@ describe('Sheet', () => {
       <Sheet>
         <SheetTrigger>Open Sheet</SheetTrigger>
         <SheetContent>
+          <SheetHeader>
+            <SheetTitle>Sheet Title</SheetTitle>
+            <SheetDescription>Sheet Description</SheetDescription>
+          </SheetHeader>
           <div>Sheet content goes here</div>
           <button>First Button</button>
           <button>Second Button</button>
@@ -143,6 +147,10 @@ describe('Sheet', () => {
       <Sheet>
         <SheetTrigger>Open Sheet</SheetTrigger>
         <SheetContent className="custom-class">
+          <SheetHeader>
+            <SheetTitle>Sheet Title</SheetTitle>
+            <SheetDescription>Sheet Description</SheetDescription>
+          </SheetHeader>
           <div>Sheet content</div>
         </SheetContent>
       </Sheet>

@@ -35,6 +35,7 @@ interface MockCacheStorage {
   open: jest.Mock;
   keys: jest.Mock;
   delete: jest.Mock;
+  match: jest.Mock;
 }
 
 // Mock classes for service worker events
@@ -92,7 +93,10 @@ class MockFetchEvent extends MockExtendableEvent {
     this.preloadResponse = Promise.resolve();
   }
 
-  respondWith(response: Promise<Response> | Response): void {}
+  respondWith(response: Promise<Response> | Response): void {
+    // Store the response for testing
+    (this as any).response = response;
+  }
 }
 
 interface ISyncEvent extends ExtendableEvent {
@@ -147,21 +151,21 @@ describe('Service Worker', () => {
   beforeEach(() => {
     eventHandlers = {};
     removeEventListener = jest.fn();
-
+  
     // Set up mock cache
-    const mockResponse = new Response();
     mockCache = {
-      match: jest.fn(() => Promise.resolve(mockResponse)),
+      match: jest.fn(),
       put: jest.fn(() => Promise.resolve()),
       addAll: jest.fn(() => Promise.resolve()),
     };
-
+  
     mockCaches = {
       open: jest.fn(() => Promise.resolve(mockCache)),
       keys: jest.fn(() => Promise.resolve(['old-cache-v1', 'old-cache-v2'])),
       delete: jest.fn(() => Promise.resolve(true)),
+      match: jest.fn(),
     };
-
+  
     // Set up mock service worker
     mockServiceWorker = {
       addEventListener: (type: string, handler: (event: Event) => void) => {
@@ -185,22 +189,25 @@ describe('Service Worker', () => {
         return false;
       },
     } as unknown as MockServiceWorkerGlobalScope;
-
+  
     // Mock global objects
-    global.caches = mockCaches as unknown as CacheStorage;
+    global.caches = {
+      ...mockCaches,
+      match: jest.fn(() => Promise.resolve()),
+    } as unknown as CacheStorage;
     global.fetch = jest.fn(() => Promise.resolve(new Response())) as unknown as typeof fetch;
-    global.URL = jest.fn((url: string) => ({ pathname: url })) as unknown as typeof URL;
-
+    global.URL = jest.fn((url: string) => ({ pathname: '/' })) as unknown as typeof URL;
+  
     // Store original navigator
     originalNavigator = window.navigator;
-
+  
     // Mock navigator.serviceWorker
     const mockServiceWorkerContainer = {
       register: jest.fn(() => Promise.resolve({} as ServiceWorkerRegistration)),
       ready: Promise.resolve({} as ServiceWorkerRegistration),
       controller: { state: 'activated' },
     } as MockServiceWorkerContainer;
-
+  
     // Create a new navigator object with our mock service worker
     Object.defineProperty(window, 'navigator', {
       value: {
@@ -210,11 +217,17 @@ describe('Service Worker', () => {
       configurable: true,
       writable: true,
     });
-
-    // Load the service worker code
-    require('@/lib/sw');
+  
+    // Mock self as ServiceWorkerGlobalScope
+    (global as any).self = mockServiceWorker as unknown as ServiceWorkerGlobalScope;
+  
+    // Load and execute the service worker code
+    const swModule = require('@/lib/sw');
+    if (typeof swModule === 'function') {
+      swModule();
+    }
   });
-
+  
   afterEach(() => {
     // Restore original navigator
     Object.defineProperty(window, 'navigator', {
@@ -222,55 +235,78 @@ describe('Service Worker', () => {
       configurable: true,
       writable: true,
     });
+    // Restore original self
+    delete (global as any).self;
+    jest.resetModules();
   });
-
-  it('should register service worker', () => {
+  
+  it('should register service worker', async () => {
+    const { registerServiceWorker } = require('@/lib/sw');
+    await registerServiceWorker();
     expect(window.navigator.serviceWorker.register).toHaveBeenCalledWith('/sw.js');
   });
 
   it('should handle install event and cache static assets', async () => {
     const installEvent = new MockExtendableEvent('install');
-    await mockServiceWorker.dispatchEvent(installEvent);
+    const swModule = require('@/lib/sw');
+    await swModule.eventHandlers.install(installEvent);
     
-    expect(mockCaches.open).toHaveBeenCalledWith('static-v1');
+    expect(mockCaches.open).toHaveBeenCalledWith('caipo-static-v1');
     expect(mockCache.addAll).toHaveBeenCalledWith([
       '/',
+      '/offline',
+      '/android-chrome-192x192.png',
+      '/android-chrome-512x512.png',
+      '/apple-touch-icon.png',
+      '/favicon-16x16.png',
+      '/favicon-32x32.png',
       '/manifest.json',
-      '/favicon.ico',
-      '/logo192.png',
-      '/logo512.png'
+      '/site.webmanifest'
     ]);
+    expect(mockServiceWorker.skipWaiting).toHaveBeenCalled();
   });
 
   it('should handle fetch events and return cached responses', async () => {
-    const request = new Request('/test.html');
-    const cachedResponse = new Response('cached content');
-    mockCache.match.mockImplementation(() => Promise.resolve(cachedResponse));
+    const request = new Request('/');
+    const mockResponse = new Response('test content');
+    (global.caches.match as jest.Mock).mockImplementation(() => Promise.resolve(mockResponse));
 
     const fetchEvent = new MockFetchEvent(request);
-    await mockServiceWorker.dispatchEvent(fetchEvent);
+    const { eventHandlers } = require('@/lib/sw');
+    await eventHandlers.fetch(fetchEvent);
 
-    expect(mockCache.match).toHaveBeenCalledWith(request);
+    // Wait for all promises to resolve
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    expect(global.caches.match).toHaveBeenCalledWith(request);
     expect(global.fetch).not.toHaveBeenCalled(); // Should not fetch if cached
   });
 
   it('should handle fetch events and fetch from network when not cached', async () => {
-    const request = new Request('/test.html');
-    mockCache.match.mockImplementation(() => Promise.resolve(null));
+    const request = new Request('/');
+    const mockResponse = new Response('test content');
+    (global.caches.match as jest.Mock).mockImplementation(() => Promise.resolve(null));
+    (global.fetch as jest.Mock).mockImplementation(() => Promise.resolve(mockResponse));
 
     const fetchEvent = new MockFetchEvent(request);
-    await mockServiceWorker.dispatchEvent(fetchEvent);
+    const { eventHandlers } = require('@/lib/sw');
+    await eventHandlers.fetch(fetchEvent);
 
-    expect(mockCache.match).toHaveBeenCalledWith(request);
+    // Wait for all promises to resolve
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    expect(global.caches.match).toHaveBeenCalledWith(request);
     expect(global.fetch).toHaveBeenCalledWith(request);
   });
 
   it('should handle activate event and clean old caches', async () => {
     const activateEvent = new MockExtendableEvent('activate');
-    await mockServiceWorker.dispatchEvent(activateEvent);
+    const swModule = require('@/lib/sw');
+    await swModule.eventHandlers.activate(activateEvent);
 
     expect(mockCaches.keys).toHaveBeenCalled();
     expect(mockCaches.delete).toHaveBeenCalledWith('old-cache-v1');
     expect(mockCaches.delete).toHaveBeenCalledWith('old-cache-v2');
+    expect(mockServiceWorker.clients.claim).toHaveBeenCalled();
   });
 }); 

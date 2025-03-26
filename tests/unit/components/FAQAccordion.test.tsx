@@ -61,15 +61,20 @@ describe('FAQAccordion', () => {
   it('can have multiple answers visible simultaneously', async () => {
     render(<FAQAccordion faqs={mockFAQs} />)
     
-    // Click both questions
-    await user.click(screen.getByText(mockFAQs[0].question))
-    await user.click(screen.getByText(mockFAQs[1].question))
-    
-    // Both answers should be visible
+    // Click both questions to open them
+    const questions = screen.getAllByRole('button');
+    await user.click(questions[0]);
+    await user.click(questions[1]);
+
+    // Wait for animations to complete and check for answers
     await waitFor(() => {
-      expect(screen.getByText(mockFAQs[0].answer)).toBeInTheDocument()
-      expect(screen.getByText(mockFAQs[1].answer)).toBeInTheDocument()
-    }, { timeout: 1000 })
+      const containers = screen.getAllByTestId('faq-container');
+      const answers = screen.getAllByTestId('faq-answer');
+      expect(containers).toHaveLength(2); // 2 FAQ containers
+      expect(answers).toHaveLength(2); // 2 answers visible
+      expect(answers[0]).toHaveTextContent(mockFAQs[0].answer);
+      expect(answers[1]).toHaveTextContent(mockFAQs[1].answer);
+    }, { timeout: 1000 });
   })
 
   it('updates icon when question is toggled', async () => {

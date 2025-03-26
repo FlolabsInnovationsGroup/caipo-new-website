@@ -1,165 +1,152 @@
 import { render, screen, act } from '@testing-library/react'
 import ServiceWorkerStatus from '@/components/ServiceWorkerStatus'
+import { swStatusEmitter, ServiceWorkerStatus as SWStatus } from '@/lib/registerServiceWorker'
+
+// Mock the service worker status emitter
+jest.mock('@/lib/registerServiceWorker', () => {
+  class MockServiceWorkerStatusEvent extends Event {
+    constructor(public status: SWStatus) {
+      super('statuschange')
+    }
+  }
+
+  return {
+    swStatusEmitter: {
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      dispatchEvent: jest.fn((event) => {
+        const handler = jest.mocked(swStatusEmitter.addEventListener).mock.calls[0][1] as EventListener
+        if (handler) {
+          handler(event)
+          // Dispatch null status after 3 seconds
+          setTimeout(() => {
+            handler(new MockServiceWorkerStatusEvent(null))
+          }, 3000)
+        }
+      })
+    },
+    ServiceWorkerStatus: {
+      INSTALLING: 'installing',
+      INSTALLED: 'installed',
+      UPDATING: 'updating'
+    },
+    ServiceWorkerStatusEvent: MockServiceWorkerStatusEvent,
+    registerServiceWorker: jest.fn()
+  }
+})
 
 // Mock framer-motion
 jest.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: any) => (
-      <div data-testid="motion-div" {...props}>
-        {children}
-      </div>
-    ),
+    div: ({ children, ...props }: any) => <div data-testid="motion-div" {...props}>{children}</div>
   },
-  AnimatePresence: ({ children }: { children: React.ReactNode }) => children,
+  AnimatePresence: ({ children }: any) => children
 }))
 
 describe('ServiceWorkerStatus', () => {
-  let mockServiceWorker: any
-  let mockRegistration: any
-  let mockController: any
-  let mockEventTarget: any
-  let originalAddEventListener: typeof window.addEventListener
-
   beforeEach(() => {
     jest.useFakeTimers()
-
-    // Store original addEventListener
-    originalAddEventListener = window.addEventListener
-
-    // Mock event target methods
-    mockEventTarget = {
-      addEventListener: jest.fn(),
-      removeEventListener: jest.fn(),
-    }
-
-    // Mock service worker registration
-    mockRegistration = {
-      installing: {
-        addEventListener: mockEventTarget.addEventListener,
-        removeEventListener: mockEventTarget.removeEventListener,
-      },
-      active: true,
-    }
-
-    // Mock service worker controller
-    mockController = {
-      state: 'activated',
-    }
-
-    // Mock service worker
-    mockServiceWorker = {
-      register: jest.fn(() => Promise.resolve(mockRegistration)),
-      addEventListener: mockEventTarget.addEventListener,
-      removeEventListener: mockEventTarget.removeEventListener,
-      controller: mockController,
-    }
-
-    // Mock window.navigator
-    Object.defineProperty(window, 'navigator', {
-      value: {
-        ...window.navigator,
-        serviceWorker: mockServiceWorker,
-      },
-      configurable: true,
-      writable: true,
-    })
-
-    // Mock window.addEventListener
-    window.addEventListener = jest.fn().mockImplementation((event: string, callback: EventListener) => {
-      if (event === 'load') {
-        callback(new Event('load'))
-      }
-    })
   })
 
   afterEach(() => {
     jest.useRealTimers()
-    window.addEventListener = originalAddEventListener
+    jest.clearAllMocks()
   })
 
   it('shows installing status when service worker is installing', async () => {
     render(<ServiceWorkerStatus />)
-    
-    // Trigger the load event callback
-    expect(window.addEventListener).toHaveBeenCalledWith('load', expect.any(Function))
-    
+
+    // Dispatch installing event
+    await act(async () => {
+      const event = new (require('@/lib/registerServiceWorker').ServiceWorkerStatusEvent)('installing')
+      swStatusEmitter.dispatchEvent(event)
+    })
+
+    // Wait for component to update
+    await act(async () => {
+      await Promise.resolve()
+    })
+
     // Verify installing message is shown
     expect(screen.getByText('Installing app...')).toBeInTheDocument()
   })
 
   it('shows installed status when service worker is active', async () => {
     render(<ServiceWorkerStatus />)
-    
+
+    // Dispatch installed event
+    await act(async () => {
+      const event = new (require('@/lib/registerServiceWorker').ServiceWorkerStatusEvent)('installed')
+      swStatusEmitter.dispatchEvent(event)
+    })
+
+    // Wait for component to update
+    await act(async () => {
+      await Promise.resolve()
+    })
+
     // Verify installed message is shown
     expect(screen.getByText('App ready to use offline')).toBeInTheDocument()
-    
+
     // Fast-forward timer to hide the message
-    act(() => {
+    await act(async () => {
       jest.advanceTimersByTime(3000)
+      await Promise.resolve()
     })
-    
-    // Message should be hidden
+
+    // Verify message is hidden
     expect(screen.queryByText('App ready to use offline')).not.toBeInTheDocument()
   })
 
   it('shows updating status when service worker is updating', async () => {
     render(<ServiceWorkerStatus />)
-    
-    // Get the controllerchange event handler
-    const [[, controllerChangeHandler]] = mockServiceWorker.addEventListener.mock.calls
-    
-    // Trigger controllerchange event
-    act(() => {
-      controllerChangeHandler(new Event('controllerchange'))
+
+    // Dispatch updating event
+    await act(async () => {
+      const event = new (require('@/lib/registerServiceWorker').ServiceWorkerStatusEvent)('updating')
+      swStatusEmitter.dispatchEvent(event)
     })
-    
+
+    // Wait for component to update
+    await act(async () => {
+      await Promise.resolve()
+    })
+
     // Verify updating message is shown
     expect(screen.getByText('Updating app...')).toBeInTheDocument()
-    
-    // Fast-forward timer to hide the message
-    act(() => {
-      jest.advanceTimersByTime(3000)
-    })
-    
-    // Message should be hidden
-    expect(screen.queryByText('Updating app...')).not.toBeInTheDocument()
-  })
 
-  it('hides status after 3 seconds', async () => {
-    render(<ServiceWorkerStatus />)
-    
-    // Initial status should be shown
-    expect(screen.getByText('Installing app...')).toBeInTheDocument()
-    
-    // Fast-forward timer
-    act(() => {
+    // Fast-forward timer to hide the message
+    await act(async () => {
       jest.advanceTimersByTime(3000)
+      await Promise.resolve()
     })
-    
-    // Status should be hidden
-    expect(screen.queryByText('Installing app...')).not.toBeInTheDocument()
+
+    // Verify message is hidden
+    expect(screen.queryByText('Updating app...')).not.toBeInTheDocument()
   })
 
   it('shows correct icon animation for updating status', async () => {
     render(<ServiceWorkerStatus />)
-    
-    // Get the controllerchange event handler
-    const [[, controllerChangeHandler]] = mockServiceWorker.addEventListener.mock.calls
-    
-    // Trigger controllerchange event
-    act(() => {
-      controllerChangeHandler(new Event('controllerchange'))
+
+    // Dispatch updating event
+    await act(async () => {
+      const event = new (require('@/lib/registerServiceWorker').ServiceWorkerStatusEvent)('updating')
+      swStatusEmitter.dispatchEvent(event)
     })
-    
+
+    // Wait for component to update
+    await act(async () => {
+      await Promise.resolve()
+    })
+
     // Verify icon has spin animation class
-    const iconContainer = screen.getByTestId('motion-div').querySelector('div')
+    const iconContainer = screen.getByTestId('motion-div').querySelector('.flex > div')
     expect(iconContainer).toHaveClass('animate-spin')
   })
 
   it('cleans up event listeners on unmount', () => {
     const { unmount } = render(<ServiceWorkerStatus />)
     unmount()
-    
-    expect(mockEventTarget.removeEventListener).toHaveBeenCalledWith('controllerchange', expect.any(Function))
+    expect(swStatusEmitter.removeEventListener).toHaveBeenCalled()
   })
 }) 

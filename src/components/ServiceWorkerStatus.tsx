@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { registerServiceWorker, swStatusEmitter, ServiceWorkerStatus as SWStatus, ServiceWorkerStatusEvent } from '@/lib/registerServiceWorker'
 
 const RefreshIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -13,39 +14,24 @@ const RefreshIcon = () => (
 )
 
 export default function ServiceWorkerStatus() {
-  const [status, setStatus] = useState<'installing' | 'installed' | 'updating' | null>(null)
+  const [status, setStatus] = useState<SWStatus>(null)
 
   useEffect(() => {
     if ('serviceWorker' in navigator) {
-      // Listen for service worker state changes
-      navigator.serviceWorker.addEventListener('controllerchange', () => {
-        setStatus('updating')
-        // Reset status after 3 seconds
-        setTimeout(() => setStatus(null), 3000)
-      })
-
-      // Check if service worker is already controlling the page
-      if (navigator.serviceWorker.controller) {
-        setStatus('installed')
-        // Reset status after 3 seconds
-        setTimeout(() => setStatus(null), 3000)
+      // Register service worker and listen for status changes
+      const handleStatusChange = (event: Event) => {
+        if (event instanceof ServiceWorkerStatusEvent) {
+          setStatus(event.status)
+        }
       }
 
-      // Listen for new service worker installation
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js').then(registration => {
-          if (registration.installing) {
-            setStatus('installing')
-            registration.installing.addEventListener('statechange', () => {
-              if (registration.active) {
-                setStatus('installed')
-                // Reset status after 3 seconds
-                setTimeout(() => setStatus(null), 3000)
-              }
-            })
-          }
-        })
-      })
+      swStatusEmitter.addEventListener('statuschange', handleStatusChange)
+      registerServiceWorker()
+
+      // Cleanup function
+      return () => {
+        swStatusEmitter.removeEventListener('statuschange', handleStatusChange)
+      }
     }
   }, [])
 

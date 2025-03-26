@@ -15,47 +15,110 @@ import {
 // Mock Vaul's internals
 jest.mock('vaul', () => {
   const actual = jest.requireActual('vaul')
+
+  const DrawerContext = React.createContext<{
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+  }>({
+    open: false,
+    onOpenChange: () => {},
+  })
+
   return {
     ...actual,
     Drawer: {
-      Root: ({ children, onOpenChange, open, ...props }: any) => {
+      Root: ({ children, onOpenChange, open: initialOpen = false, ...props }: any) => {
+        const [isOpen, setIsOpen] = React.useState(initialOpen)
+
         React.useEffect(() => {
-          if (onOpenChange) {
-            onOpenChange(open)
+          if (initialOpen !== undefined) {
+            setIsOpen(initialOpen)
           }
-        }, [open, onOpenChange])
+        }, [initialOpen])
+
+        const handleOpenChange = (newOpen: boolean) => {
+          setIsOpen(newOpen)
+          onOpenChange?.(newOpen)
+        }
+
+        React.useEffect(() => {
+          const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === 'Escape' && isOpen) {
+              handleOpenChange(false)
+            }
+          }
+          window.addEventListener('keydown', handleKeyDown)
+          return () => window.removeEventListener('keydown', handleKeyDown)
+        }, [isOpen])
+
+        const context = React.useMemo(
+          () => ({ open: isOpen, onOpenChange: handleOpenChange }),
+          [isOpen]
+        )
+
         return (
-          <div data-testid="drawer-root" {...props} open={open}>
-            {typeof children === 'function' ? children({ open }) : children}
-          </div>
+          <DrawerContext.Provider value={context}>
+            <div data-testid="drawer-root" {...props} data-state={isOpen ? 'open' : 'closed'}>
+              {typeof children === 'function' ? children(context) : children}
+            </div>
+          </DrawerContext.Provider>
         )
       },
-      Trigger: ({ children, ...props }: any) => (
-        <button data-testid="drawer-trigger" {...props}>
-          {children}
-        </button>
-      ),
+      Trigger: ({ children, ...props }: any) => {
+        const context = React.useContext(DrawerContext)
+        return (
+          <button 
+            type="button"
+            data-testid="drawer-trigger" 
+            onClick={() => context.onOpenChange(true)}
+            {...props}
+          >
+            {children}
+          </button>
+        )
+      },
       Portal: ({ children, ...props }: any) => (
         <div data-testid="drawer-portal" {...props}>
           {children}
         </div>
       ),
-      Content: ({ children, ...props }: any) => (
-        <div data-testid="drawer-content" role="dialog" {...props}>
-          <div className="mx-auto mt-4 h-2 w-[100px] rounded-full bg-muted" />
-          {children}
-        </div>
-      ),
-      Overlay: ({ children, ...props }: any) => (
-        <div data-testid="drawer-overlay" {...props} className="fixed inset-0 z-50 bg-black/80">
-          {children}
-        </div>
-      ),
-      Close: ({ children, ...props }: any) => (
-        <button data-testid="drawer-close" {...props}>
-          {children}
-        </button>
-      )
+      Content: ({ children, ...props }: any) => {
+        const context = React.useContext(DrawerContext)
+        if (!context.open) return null
+        return (
+          <div data-testid="drawer-content" role="dialog" {...props}>
+            <div className="mx-auto mt-4 h-2 w-[100px] rounded-full bg-muted" />
+            {children}
+          </div>
+        )
+      },
+      Overlay: ({ children, ...props }: any) => {
+        const context = React.useContext(DrawerContext)
+        if (!context.open) return null
+        return (
+          <div 
+            data-testid="drawer-overlay" 
+            onClick={() => context.onOpenChange(false)}
+            {...props} 
+            className="fixed inset-0 z-50 bg-black/80"
+          >
+            {children}
+          </div>
+        )
+      },
+      Close: ({ children, ...props }: any) => {
+        const context = React.useContext(DrawerContext)
+        return (
+          <button 
+            type="button"
+            data-testid="drawer-close" 
+            onClick={() => context.onOpenChange(false)}
+            {...props}
+          >
+            {children}
+          </button>
+        )
+      }
     }
   }
 })
@@ -140,9 +203,9 @@ describe('Drawer', () => {
     expect(onOpenChange).toHaveBeenCalledWith(false)
   })
 
-  it('should apply custom className to content', () => {
+  it('should apply custom className to content', async () => {
     render(
-      <Drawer>
+      <Drawer open>
         <DrawerTrigger>Open Drawer</DrawerTrigger>
         <DrawerContent className="custom-class">Content</DrawerContent>
       </Drawer>

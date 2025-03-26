@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import GlassCard from '@/components/GlassCard'
 import { toast } from 'sonner'
@@ -16,79 +16,102 @@ interface EarlyAccessSignup {
 export default function EarlyAccessManagement() {
   const [signups, setSignups] = useState<EarlyAccessSignup[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [selectedStatus, setSelectedStatus] = useState<string>('all')
+  const [error, setError] = useState<string | null>(null)
   const [selectedSignups, setSelectedSignups] = useState<Set<string>>(new Set())
+  const [selectedStatus, setSelectedStatus] = useState<'all' | 'PENDING' | 'APPROVED' | 'REJECTED'>('all')
   const [sortConfig, setSortConfig] = useState<{
     key: keyof EarlyAccessSignup
     direction: 'asc' | 'desc'
-  }>({ key: 'createdAt', direction: 'desc' })
-
-  useEffect(() => {
-    fetchSignups()
-  }, [])
+  }>({
+    key: 'createdAt',
+    direction: 'desc'
+  })
 
   const fetchSignups = async () => {
     try {
+      setIsLoading(true)
+      setError(null)
       const response = await fetch('/api/admin/early-access')
-      if (!response.ok) throw new Error('Failed to fetch signups')
+      if (!response.ok) {
+        throw new Error('Failed to fetch signups')
+      }
       const data = await response.json()
       setSignups(data)
-    } catch (error) {
-      console.error('Error fetching signups:', error)
-      toast.error('Failed to load signups')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch signups')
     } finally {
       setIsLoading(false)
     }
   }
 
-  const updateStatus = async (id: string, newStatus: 'PENDING' | 'APPROVED' | 'REJECTED') => {
-    try {
-      const response = await fetch('/api/admin/early-access/update-status', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, status: newStatus })
-      })
+  useEffect(() => {
+    fetchSignups()
+  }, [])
 
-      if (!response.ok) throw new Error('Failed to update status')
-      
-      setSignups(signups.map(signup => 
-        signup.id === id ? { ...signup, status: newStatus } : signup
-      ))
-      
-      toast.success('Status updated successfully')
-    } catch (error) {
-      console.error('Error updating status:', error)
-      toast.error('Failed to update status')
+  const filteredSignups = useMemo(() => {
+    if (!signups) return []
+    let filtered = [...signups]
+    if (selectedStatus !== 'all') {
+      filtered = filtered.filter((signup) => signup.status === selectedStatus)
+    }
+    if (sortConfig.key) {
+      filtered.sort((a, b) => {
+        if (sortConfig.key === 'createdAt') {
+          return sortConfig.direction === 'asc'
+            ? new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+            : new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        }
+        return sortConfig.direction === 'asc'
+          ? a[sortConfig.key].localeCompare(b[sortConfig.key])
+          : b[sortConfig.key].localeCompare(a[sortConfig.key])
+      })
+    }
+    return filtered
+  }, [signups, selectedStatus, sortConfig])
+
+  const statusCounts = useMemo(() => {
+    if (!signups) return { all: 0, PENDING: 0, APPROVED: 0, REJECTED: 0 }
+    return {
+      all: signups.length,
+      PENDING: signups.filter((s) => s.status === 'PENDING').length,
+      APPROVED: signups.filter((s) => s.status === 'APPROVED').length,
+      REJECTED: signups.filter((s) => s.status === 'REJECTED').length,
+    }
+  }, [signups])
+
+  const updateStatus = async (id: string, status: EarlyAccessSignup['status']) => {
+    try {
+      const response = await fetch(`/api/admin/early-access/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status }),
+      })
+      if (!response.ok) {
+        throw new Error('Failed to update status')
+      }
+      await fetchSignups()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update status')
     }
   }
 
-  const updateBatchStatus = async (newStatus: 'PENDING' | 'APPROVED' | 'REJECTED') => {
-    if (selectedSignups.size === 0) {
-      toast.error('No signups selected')
-      return
-    }
-
+  const updateBatchStatus = async (status: EarlyAccessSignup['status']) => {
     try {
-      const response = await fetch('/api/admin/early-access/update-batch', {
-        method: 'POST',
+      const response = await fetch('/api/admin/early-access/batch', {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           ids: Array.from(selectedSignups),
-          status: newStatus 
-        })
+          status,
+        }),
       })
-
-      if (!response.ok) throw new Error('Failed to update statuses')
-      
-      setSignups(signups.map(signup => 
-        selectedSignups.has(signup.id) ? { ...signup, status: newStatus } : signup
-      ))
-      
-      toast.success(`Updated ${selectedSignups.size} signups`)
+      if (!response.ok) {
+        throw new Error('Failed to update batch status')
+      }
+      await fetchSignups()
       setSelectedSignups(new Set())
-    } catch (error) {
-      console.error('Error updating statuses:', error)
-      toast.error('Failed to update statuses')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update batch status')
     }
   }
 
@@ -103,25 +126,28 @@ export default function EarlyAccessManagement() {
   }
 
   const exportToCSV = () => {
-    const headers = ['Email', 'Source', 'Status', 'Date']
-    const csvContent = [
-      headers.join(','),
-      ...filteredSignups.map(signup => [
+    if (!signups) return
+    const csv = [
+      ['Email', 'Source', 'Status', 'Created At'],
+      ...filteredSignups.map((signup) => [
         signup.email,
         signup.source || 'unknown',
         signup.status,
-        new Date(signup.createdAt).toLocaleDateString()
-      ].join(','))
-    ].join('\n')
+        new Date(signup.createdAt).toLocaleDateString(),
+      ]),
+    ]
+      .map((row) => row.join(','))
+      .join('\n')
 
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
-    const link = document.createElement('a')
-    const url = URL.createObjectURL(blob)
-    link.setAttribute('href', url)
-    link.setAttribute('download', `early-access-signups-${new Date().toISOString().split('T')[0]}.csv`)
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
+    const blob = new Blob([csv], { type: 'text/csv' })
+    const url = window.URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'early-access-signups.csv'
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    window.URL.revokeObjectURL(url)
   }
 
   const toggleSelectAll = () => {
@@ -140,28 +166,6 @@ export default function EarlyAccessManagement() {
       newSelected.add(id)
     }
     setSelectedSignups(newSelected)
-  }
-
-  // Initialize filteredSignups
-  let filteredSignups = signups ? (
-    selectedStatus === 'all'
-      ? signups
-      : signups.filter(signup => signup.status === selectedStatus)
-  ) : []
-
-  // Apply sorting
-  filteredSignups = filteredSignups.length > 0 ? [...filteredSignups].sort((a, b) => {
-    const aValue = a[sortConfig.key]
-    const bValue = b[sortConfig.key]
-    const direction = sortConfig.direction === 'asc' ? 1 : -1
-    return aValue < bValue ? -1 * direction : aValue > bValue ? 1 * direction : 0
-  }) : []
-
-  const statusCounts = {
-    all: signups.length,
-    PENDING: signups.filter(s => s.status === 'PENDING').length,
-    APPROVED: signups.filter(s => s.status === 'APPROVED').length,
-    REJECTED: signups.filter(s => s.status === 'REJECTED').length
   }
 
   const StatusBadge = ({ status }: { status: string }) => {
@@ -235,6 +239,16 @@ export default function EarlyAccessManagement() {
               </button>
             ))}
           </div>
+
+          {/* Error Message */}
+          {error && (
+            <div
+              role="alert"
+              className="mb-4 p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400"
+            >
+              {error}
+            </div>
+          )}
 
           {/* Batch Actions */}
           {selectedSignups.size > 0 && (
@@ -316,6 +330,12 @@ export default function EarlyAccessManagement() {
                         </div>
                       </td>
                     </tr>
+                  ) : error ? (
+                    <tr>
+                      <td colSpan={6} className="text-center py-8 text-red-400">
+                        {error}
+                      </td>
+                    </tr>
                   ) : filteredSignups.length === 0 ? (
                     <tr>
                       <td colSpan={6} className="text-center py-8 text-gray-400">
@@ -359,6 +379,15 @@ export default function EarlyAccessManagement() {
                               aria-label={`Reject ${signup.email}`}
                             >
                               Reject
+                            </button>
+                          )}
+                          {signup.status !== 'PENDING' && (
+                            <button
+                              onClick={() => updateStatus(signup.id, 'PENDING')}
+                              className="text-yellow-400 hover:text-yellow-300 transition-colors"
+                              aria-label={`Reset ${signup.email}`}
+                            >
+                              Reset
                             </button>
                           )}
                         </td>

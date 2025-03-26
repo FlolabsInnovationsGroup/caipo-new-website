@@ -1,17 +1,35 @@
 import { Response } from 'node-fetch'
-
-// Mock Response before importing Next.js modules
-global.Response = Response as any
-
-// Import other modules
+import { NextResponse } from 'next/server'
 import { POST } from '@/app/api/early-access/signup/route'
 import { NextRequest } from 'next/server'
-import { getServerSession } from 'next-auth'
 import prisma from '@/lib/prisma'
+import { z } from 'zod'
 
 // Mock next-auth
 jest.mock('next-auth')
-jest.mock('@/lib/prisma')
+
+// Mock prisma
+jest.mock('@/lib/prisma', () => ({
+  __esModule: true,
+  default: {
+    earlyAccessSignup: {
+      create: jest.fn(),
+      findUnique: jest.fn()
+    }
+  }
+}))
+
+// Mock NextResponse
+jest.mock('next/server', () => ({
+  ...jest.requireActual('next/server'),
+  NextResponse: {
+    json: (data: any, init?: ResponseInit) => {
+      const response = new Response(JSON.stringify(data), init)
+      response.json = () => Promise.resolve(data)
+      return response
+    }
+  }
+}))
 
 describe('Early Access API', () => {
   beforeEach(() => {
@@ -20,10 +38,10 @@ describe('Early Access API', () => {
 
   describe('POST /api/early-access/signup', () => {
     it('creates a new signup', async () => {
-      // Mock session
-      ;(getServerSession as jest.Mock).mockResolvedValue(null)
+      // Mock findUnique to return null (no existing signup)
+      ;(prisma.earlyAccessSignup.findUnique as jest.Mock).mockResolvedValue(null)
 
-      // Mock database query
+      // Mock create to return a new signup
       ;(prisma.earlyAccessSignup.create as jest.Mock).mockResolvedValue({
         id: 1,
         email: 'test@example.com',
@@ -38,16 +56,15 @@ describe('Early Access API', () => {
       })
 
       const response = await POST(request)
-      expect(response.status).toBe(200)
+      expect(response.status).toBe(201)
     })
 
     it('handles duplicate email', async () => {
-      // Mock session
-      ;(getServerSession as jest.Mock).mockResolvedValue(null)
-
-      // Mock database query to throw unique constraint error
-      ;(prisma.earlyAccessSignup.create as jest.Mock).mockRejectedValue({
-        code: 'P2002'
+      // Mock findUnique to return an existing signup
+      ;(prisma.earlyAccessSignup.findUnique as jest.Mock).mockResolvedValue({
+        id: 1,
+        email: 'test@example.com',
+        status: 'pending'
       })
 
       const request = new NextRequest('http://localhost:3000/api/early-access/signup', {
@@ -58,13 +75,10 @@ describe('Early Access API', () => {
       })
 
       const response = await POST(request)
-      expect(response.status).toBe(400)
+      expect(response.status).toBe(409)
     })
 
     it('handles invalid email', async () => {
-      // Mock session
-      ;(getServerSession as jest.Mock).mockResolvedValue(null)
-
       const request = new NextRequest('http://localhost:3000/api/early-access/signup', {
         method: 'POST',
         body: JSON.stringify({

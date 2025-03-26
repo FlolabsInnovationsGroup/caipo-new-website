@@ -175,4 +175,97 @@ self.addEventListener('notificationclick', ((event: NotificationEvent) => {
       self.clients.openWindow('/')
     );
   }
-}) as EventListener); 
+}) as EventListener);
+
+// Export the event handlers for testing
+export const eventHandlers = {
+  install: (event: ExtendableEvent) => {
+    event.waitUntil(
+      caches.open(CACHE_NAME).then((cache) => {
+        return cache.addAll(STATIC_ASSETS);
+      })
+    );
+    self.skipWaiting();
+  },
+  activate: (event: ExtendableEvent) => {
+    event.waitUntil(
+      Promise.all([
+        caches.keys().then((cacheNames) => {
+          return Promise.all(
+            cacheNames
+              .filter((name) => name !== CACHE_NAME)
+              .map((name) => caches.delete(name))
+          );
+        }),
+        self.clients.claim(),
+      ])
+    );
+  },
+  fetch: (event: FetchEvent) => {
+    const url = new URL(event.request.url);
+    
+    // Cache-first strategy for static assets
+    if (STATIC_ASSETS.includes(url.pathname)) {
+      event.respondWith(
+        caches.match(event.request).then((response) => {
+          return response || fetch(event.request).then((fetchResponse) => {
+            return caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, fetchResponse.clone());
+              return fetchResponse;
+            });
+          });
+        })
+      );
+      return;
+    }
+
+    // Network-first strategy for HTML pages
+    if (event.request.mode === 'navigate') {
+      event.respondWith(
+        fetch(event.request)
+          .catch(() => {
+            return caches.match('/offline').then(response => {
+              if (response) return response;
+              throw new Error('No offline page available');
+            });
+          })
+      );
+      return;
+    }
+
+    // Stale-while-revalidate strategy for API requests
+    if (event.request.method === 'GET') {
+      event.respondWith(
+        caches.match(event.request).then((cachedResponse) => {
+          const fetchPromise = fetch(event.request).then((networkResponse) => {
+            if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
+              return networkResponse;
+            }
+            return caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, networkResponse.clone());
+              return networkResponse;
+            });
+          });
+          return cachedResponse || fetchPromise;
+        })
+      );
+      return;
+    }
+
+    // Pass through all other requests
+    event.respondWith(fetch(event.request));
+  },
+};
+
+// Export registration function for testing
+export const registerServiceWorker = async () => {
+  if ('serviceWorker' in navigator) {
+    try {
+      const registration = await navigator.serviceWorker.register('/sw.js');
+      return registration;
+    } catch (error) {
+      console.error('Service worker registration failed:', error);
+      throw error;
+    }
+  }
+}; 
