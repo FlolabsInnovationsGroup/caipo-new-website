@@ -1,36 +1,159 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CAIPO Landing Page
+
+A modern, responsive landing page for CAIPO built with Next.js 14, TypeScript, and Tailwind CSS.
+
+## Features
+
+- 🚀 Next.js 14 App Router
+- 🔒 Authentication with NextAuth.js
+- 🎨 Tailwind CSS for styling
+- 🌐 Progressive Web App (PWA) support
+- 📱 Responsive design
+- 🧪 Testing with Jest and Playwright
+- 🔍 SEO optimized
+- 🔐 Admin dashboard with early access management
+- 📊 Performance monitoring
+- 🌙 Glass morphism UI design
+
+## Prerequisites
+
+- Node.js 18 or later
+- pnpm
+- SQLite (for development)
 
 ## Getting Started
 
-First, run the development server:
-
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <repository-url>
+cd caipo-new
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+pnpm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Set up environment variables:
+```bash
+cp .env.example .env
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Required environment variables:
+- `DATABASE_URL`: SQLite database URL
+- `NEXTAUTH_SECRET`: Secret for NextAuth.js
+- `NEXTAUTH_URL`: Your application URL
+- `ADMIN_USERNAME`: Admin username
+- `ADMIN_PASSWORD`: Admin password
 
-## Learn More
+4. Set up the database:
+```bash
+pnpm prisma generate
+pnpm prisma migrate dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+5. Run the development server:
+```bash
+pnpm dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Open [http://localhost:3000](http://localhost:3000) to view the application.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Testing
 
-## Deploy on Vercel
+The project includes both unit tests and end-to-end tests.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Unit Tests (Jest)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+# Run all unit tests
+pnpm test
+
+# Run tests in watch mode
+pnpm test:watch
+
+# Generate coverage report
+pnpm test:coverage
+```
+
+### End-to-End Tests (Playwright)
+
+```bash
+# Run all E2E tests
+pnpm test:e2e
+
+# Run E2E tests with UI
+pnpm test:e2e:ui
+```
+
+## Project Structure
+
+```
+src/
+├── app/           # Next.js App Router pages and layouts
+├── components/    # React components
+│   └── ui/       # Reusable UI components
+├── hooks/        # Custom React hooks
+├── lib/          # Utility functions and services
+├── styles/       # Global styles and CSS modules
+└── types/        # TypeScript type definitions
+
+tests/
+├── e2e/         # End-to-end tests (Playwright)
+├── unit/        # Unit tests (Jest)
+└── utils/       # Test utilities
+```
+
+## Available Scripts
+
+- `pnpm dev` - Start development server
+- `pnpm build` - Build for production
+- `pnpm start` - Start production server
+- `pnpm lint` - Run ESLint
+- `pnpm test` - Run unit tests
+- `pnpm test:e2e` - Run end-to-end tests
+- `pnpm generate:pwa` - Generate PWA assets
+- `pnpm generate:vapid` - Generate VAPID keys for push notifications
+
+## Admin Dashboard
+
+The admin dashboard is accessible at `/admin` and requires authentication. Default credentials:
+- Username: `admin`
+- Password: `caipo2024`
+
+Features:
+- Early access signup management
+- Performance monitoring
+- User analytics
+
+## Contributing
+
+1. Create a feature branch
+2. Make your changes
+3. Write or update tests
+4. Update documentation
+5. Submit a pull request
+
+## Performance
+
+The application is optimized for performance:
+- Server-side rendering with Next.js
+- Image optimization
+- Code splitting
+- Progressive Web App
+- Performance monitoring
+
+## Browser Support
+
+The application supports all modern browsers:
+- Chrome/Edge (last 2 versions)
+- Firefox (last 2 versions)
+- Safari (last 2 versions)
+
+## License
+
+[MIT License](LICENSE)
+
+## Support
+
+For support, email [support@caipo.ai](mailto:support@caipo.ai)

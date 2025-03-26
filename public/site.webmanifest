@@ -1,0 +1,59 @@
+{
+    "name": "CAIPO - AI-Powered Intelligence Assistant",
+    "short_name": "CAIPO",
+    "description": "Transform the way you work with intelligent automation, voice interaction, and visual understanding.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#000000",
+    "theme_color": "#000000",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "/android-chrome-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/android-chrome-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        },
+        {
+            "src": "/maskable-icon.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "Features",
+            "url": "/features",
+            "description": "Explore CAIPO's features"
+        },
+        {
+            "name": "Support",
+            "url": "/support",
+            "description": "Get help with CAIPO"
+        }
+    ],
+    "categories": ["productivity", "ai", "business", "utilities"],
+    "screenshots": [
+        {
+            "src": "/screenshots/home.jpg",
+            "sizes": "1280x720",
+            "type": "image/jpeg",
+            "platform": "wide",
+            "label": "CAIPO Home Screen"
+        },
+        {
+            "src": "/screenshots/features.jpg",
+            "sizes": "1280x720",
+            "type": "image/jpeg",
+            "platform": "wide",
+            "label": "CAIPO Features"
+        }
+    ],
+    "related_applications": [],
+    "prefer_related_applications": false
+} 

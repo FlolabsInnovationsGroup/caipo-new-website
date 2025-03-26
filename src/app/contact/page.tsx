@@ -1,0 +1,170 @@
+'use client'
+
+import { useState } from 'react'
+import { motion } from 'framer-motion'
+import Navbar from '@/components/Navbar'
+import Footer from '@/components/Footer'
+import FAQAccordion from '@/components/FAQAccordion'
+import GlassButton from '@/components/GlassButton'
+
+export default function Contact() {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    subject: '',
+    message: ''
+  })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+    // Add your form submission logic here
+    await new Promise(resolve => setTimeout(resolve, 1000)) // Simulate API call
+    setIsSubmitting(false)
+    // Reset form or show success message
+  }
+
+  return (
+    <main className="min-h-screen flex flex-col bg-black">
+      <Navbar />
+
+      {/* Background Elements */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-purple-500/20 rounded-full blur-[120px] opacity-30" />
+        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-blue-500/20 rounded-full blur-[120px] opacity-30" />
+      </div>
+
+      {/* Contact Section */}
+      <section className="pt-32 pb-20 relative">
+        <div className="container mx-auto px-6">
+          <motion.div 
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <h1 className="text-5xl md:text-6xl font-bold mb-6">
+              Get in Touch
+            </h1>
+            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+              Have questions? We're here to help.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-6xl mx-auto">
+            {/* Contact Form */}
+            <motion.div
+              className="glass p-8 rounded-2xl"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                  <label className="block text-sm font-medium mb-2">Name</label>
+                  <input
+                    type="text"
+                    className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
+                    required
+                    value={formData.name}
+                    onChange={e => setFormData({ ...formData, name: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Email</label>
+                  <input
+                    type="email"
+                    className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
+                    required
+                    value={formData.email}
+                    onChange={e => setFormData({ ...formData, email: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Subject</label>
+                  <input
+                    type="text"
+                    className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
+                    required
+                    value={formData.subject}
+                    onChange={e => setFormData({ ...formData, subject: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Message</label>
+                  <textarea
+                    className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500 h-32"
+                    required
+                    value={formData.message}
+                    onChange={e => setFormData({ ...formData, message: e.target.value })}
+                  />
+                </div>
+                <GlassButton
+                  type="submit"
+                  className="w-full justify-center"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? 'Sending...' : 'Send Message'}
+                </GlassButton>
+              </form>
+            </motion.div>
+
+            {/* Contact Info */}
+            <motion.div
+              className="space-y-8"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <div className="glass p-6 rounded-2xl">
+                <h3 className="text-xl font-bold mb-4">Quick Support</h3>
+                <p className="text-gray-400">
+                  Need immediate assistance? Our support team is available 24/7.
+                </p>
+                <GlassButton href="#chat" className="mt-4">
+                  Start Live Chat
+                </GlassButton>
+              </div>
+
+              <div className="glass p-6 rounded-2xl">
+                <h3 className="text-xl font-bold mb-4">Email Support</h3>
+                <p className="text-gray-400">
+                  For non-urgent inquiries, email us at:
+                  <br />
+                  <a href="mailto:support@caipo.ai" className="text-purple-500 hover:text-purple-400">
+                    support@caipo.ai
+                  </a>
+                </p>
+              </div>
+
+              <div className="glass p-6 rounded-2xl">
+                <h3 className="text-xl font-bold mb-4">Office Hours</h3>
+                <p className="text-gray-400">
+                  Monday - Friday
+                  <br />
+                  9:00 AM - 6:00 PM EST
+                </p>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* FAQ Section */}
+          <motion.div
+            className="mt-20"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            <h2 className="text-3xl font-bold text-center mb-12">
+              Frequently Asked Questions
+            </h2>
+            <FAQAccordion />
+          </motion.div>
+        </div>
+      </section>
+
+      <Footer />
+    </main>
+  )
+}
