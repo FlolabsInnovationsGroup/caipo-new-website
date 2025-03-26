@@ -5,28 +5,30 @@ A modern, responsive landing page for CAIPO built with Next.js 14, TypeScript, a
 ## Features
 
 - 🚀 Next.js 14 App Router
-- 🔒 Authentication with NextAuth.js
-- 🎨 Tailwind CSS for styling
-- 🌐 Progressive Web App (PWA) support
-- 📱 Responsive design
+- 🎨 Tailwind CSS with modern UI components
+- 🔒 Authentication with NextAuth.js and Prisma adapter
+- 🎭 Radix UI primitives for accessible components
+- 🌈 Framer Motion animations
 - 🧪 Testing with Jest and Playwright
 - 🔍 SEO optimized
-- 🔐 Admin dashboard with early access management
-- 📊 Performance monitoring
+- 📱 Responsive design
+- 🎯 Form handling with React Hook Form and Zod validation
+- 🎨 Class Variance Authority for type-safe styling
+- 🔔 Web Push notifications support
 - 🌙 Glass morphism UI design
 
 ## Prerequisites
 
 - Node.js 18 or later
-- pnpm
+- pnpm (recommended) or npm
 - SQLite (for development)
 
 ## Getting Started
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
-cd caipo-new
+git clone https://github.com/FlomadLabsRD/caipo-new-website.git
+cd caipo-new-website
 ```
 
 2. Install dependencies:
@@ -43,8 +45,6 @@ Required environment variables:
 - `DATABASE_URL`: SQLite database URL
 - `NEXTAUTH_SECRET`: Secret for NextAuth.js
 - `NEXTAUTH_URL`: Your application URL
-- `ADMIN_USERNAME`: Admin username
-- `ADMIN_PASSWORD`: Admin password
 
 4. Set up the database:
 ```bash
@@ -92,16 +92,17 @@ pnpm test:e2e:ui
 src/
 ├── app/           # Next.js App Router pages and layouts
 ├── components/    # React components
-│   └── ui/       # Reusable UI components
 ├── hooks/        # Custom React hooks
 ├── lib/          # Utility functions and services
-├── styles/       # Global styles and CSS modules
-└── types/        # TypeScript type definitions
+├── styles/       # Global styles
+├── types/        # TypeScript type definitions
+└── __mocks__/    # Mock files for testing
 
 tests/
-├── e2e/         # End-to-end tests (Playwright)
-├── unit/        # Unit tests (Jest)
-└── utils/       # Test utilities
+├── unit/         # Unit tests (Jest)
+├── utils/        # Test utilities
+├── __mocks__/    # Test mocks
+└── jest.setup.ts # Jest configuration
 ```
 
 ## Available Scripts
@@ -112,36 +113,25 @@ tests/
 - `pnpm lint` - Run ESLint
 - `pnpm test` - Run unit tests
 - `pnpm test:e2e` - Run end-to-end tests
+- `pnpm test:coverage` - Generate test coverage report
 - `pnpm generate:pwa` - Generate PWA assets
 - `pnpm generate:vapid` - Generate VAPID keys for push notifications
 
-## Admin Dashboard
+## Key Dependencies
 
-The admin dashboard is accessible at `/admin` and requires authentication. Default credentials:
-- Username: `admin`
-- Password: `caipo2024`
-
-Features:
-- Early access signup management
-- Performance monitoring
-- User analytics
-
-## Contributing
-
-1. Create a feature branch
-2. Make your changes
-3. Write or update tests
-4. Update documentation
-5. Submit a pull request
-
-## Performance
-
-The application is optimized for performance:
-- Server-side rendering with Next.js
-- Image optimization
-- Code splitting
-- Progressive Web App
-- Performance monitoring
+- Next.js 14
+- React 18
+- TypeScript
+- Tailwind CSS
+- NextAuth.js
+- Prisma
+- Radix UI
+- Framer Motion
+- React Hook Form
+- Zod
+- Jest
+- Playwright
+- MSW (Mock Service Worker)
 
 ## Browser Support
 
