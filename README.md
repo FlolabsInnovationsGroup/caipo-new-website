@@ -144,6 +144,4 @@ The application supports all modern browsers:
 
 [MIT License](LICENSE)
 
-## Support
 
-For support, email [support@caipo.ai](mailto:support@caipo.ai)
