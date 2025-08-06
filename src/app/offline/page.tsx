@@ -1,12 +1,8 @@
+'use client'
 import Link from 'next/link'
 import GlassCard from '@/components/GlassCard'
 import GlassButton from '@/components/GlassButton'
 import { WifiOff, RefreshCw, Home } from 'lucide-react'
-
-export const metadata = {
-  title: 'Offline | CAIPO',
-  description: 'You are currently offline. Please check your internet connection.',
-}
 
 export default function OfflinePage() {
   return (
