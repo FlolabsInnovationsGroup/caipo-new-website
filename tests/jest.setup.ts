@@ -274,7 +274,7 @@ class MockHeaders implements Headers {
   }
 
   forEach(callbackfn: (value: string, key: string, parent: Headers) => void): void {
-    this.headers.forEach((value, key) => callbackfn(value, key, this));
+    this.headers.forEach((value, key) => callbackfn(value, key, this as unknown as Headers));
   }
 
   entries(): HeadersIterator<[string, string]> {
