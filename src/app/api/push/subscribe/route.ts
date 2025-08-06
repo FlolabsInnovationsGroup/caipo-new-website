@@ -1,21 +1,29 @@
 import { NextResponse } from 'next/server';
 import webpush from 'web-push';
 
-// Configure web-push with VAPID keys
-const vapidKeys = {
-  publicKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
-  privateKey: process.env.VAPID_PRIVATE_KEY!,
-  subject: 'mailto:notifications@caipo.ai'
-};
-
-webpush.setVapidDetails(
-  vapidKeys.subject,
-  vapidKeys.publicKey,
-  vapidKeys.privateKey
-);
-
 export async function POST(request: Request) {
   try {
+    // Configure web-push with VAPID keys (moved inside the handler)
+    const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+    const vapidPrivateKey = process.env.VAPID_PRIVATE_KEY;
+
+    if (!vapidPublicKey || !vapidPrivateKey) {
+      console.error('VAPID keys not configured');
+      return NextResponse.json(
+        { 
+          message: 'Push notifications not configured',
+          error: 'VAPID keys missing'
+        },
+        { status: 500 }
+      );
+    }
+
+    webpush.setVapidDetails(
+      'mailto:notifications@caipo.ai',
+      vapidPublicKey,
+      vapidPrivateKey
+    );
+
     const subscription = await request.json();
 
     // Store the subscription in your database
