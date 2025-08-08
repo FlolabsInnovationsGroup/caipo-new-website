@@ -52,10 +52,10 @@ export default function Contact() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-6xl mx-auto">
-            {/* Contact Form */}
+          {/* Centered Contact Form */}
+          <div className="flex justify-center">
             <motion.div
-              className="glass p-8 rounded-2xl"
+              className="glass p-8 rounded-2xl w-full max-w-xl"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
@@ -109,58 +109,8 @@ export default function Contact() {
                 </GlassButton>
               </form>
             </motion.div>
-
-            {/* Contact Info */}
-            <motion.div
-              className="space-y-8"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              <div className="glass p-6 rounded-2xl">
-                <h3 className="text-xl font-bold mb-4">Quick Support</h3>
-                <p className="text-gray-400">
-                  Need immediate assistance? Our support team is available 24/7.
-                </p>
-                <GlassButton href="#chat" className="mt-4">
-                  Start Live Chat
-                </GlassButton>
-              </div>
-
-              <div className="glass p-6 rounded-2xl">
-                <h3 className="text-xl font-bold mb-4">Email Support</h3>
-                <p className="text-gray-400">
-                  For non-urgent inquiries, email us at:
-                  <br />
-                  <a href="mailto:support@caipo.ai" className="text-purple-500 hover:text-purple-400">
-                    support@caipo.ai
-                  </a>
-                </p>
-              </div>
-
-              <div className="glass p-6 rounded-2xl">
-                <h3 className="text-xl font-bold mb-4">Office Hours</h3>
-                <p className="text-gray-400">
-                  Monday - Friday
-                  <br />
-                  9:00 AM - 6:00 PM EST
-                </p>
-              </div>
-            </motion.div>
           </div>
 
-          {/* FAQ Section */}
-          <motion.div
-            className="mt-20"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            <h2 className="text-3xl font-bold text-center mb-12">
-              Frequently Asked Questions
-            </h2>
-            <FAQAccordion />
-          </motion.div>
         </div>
       </section>
 
