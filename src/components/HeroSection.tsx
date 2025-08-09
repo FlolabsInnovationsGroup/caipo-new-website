@@ -92,73 +92,8 @@ export default function HeroSection() {
                 <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-blue-500/20 rounded-full blur-[120px] opacity-30" />
             </div>
 
-            {/* Background text "CAIPO" */}
-            <motion.div 
-                className="absolute inset-0 pointer-events-none overflow-hidden"
-                style={{ zIndex: 0 }}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 1 }}
-            >
-                <div 
-                    className="fixed top-1/2 left-1/2 text-[40vh] font-black select-none"
-                    style={{
-                        transform: 'translate(-50%, -50%)',
-                        width: 'max-content',
-                        lineHeight: '1',
-                        letterSpacing: '-0.05em',
-                        color: 'rgba(255, 255, 255, 0.02)',
-                        WebkitTextStroke: '1px rgba(255, 255, 255, 0.06)',
-                        textShadow: `
-                            0 0 100px rgba(139, 92, 246, 0.1),
-                            0 0 200px rgba(139, 92, 246, 0.05),
-                            0 0 40px rgba(96, 165, 250, 0.1)
-                        `,
-                        mixBlendMode: 'overlay',
-                        opacity: 0.7,
-                        userSelect: 'none',
-                        animation: 'glow 8s ease-in-out infinite alternate'
-                    }}
-                >
-                    CAIPO
-                </div>
-            </motion.div>
-
-            <style jsx>{`
-                @keyframes glow {
-                    0% {
-                        text-shadow: 
-                            0 0 100px rgba(139, 92, 246, 0.1),
-                            0 0 200px rgba(139, 92, 246, 0.05),
-                            0 0 40px rgba(96, 165, 250, 0.1);
-                    }
-                    100% {
-                        text-shadow: 
-                            0 0 120px rgba(139, 92, 246, 0.15),
-                            0 0 250px rgba(139, 92, 246, 0.1),
-                            0 0 60px rgba(96, 165, 250, 0.15);
-                    }
-                }
-            `}</style>
-
-            {/* Large background device - Preserved from original */}
-            <motion.div 
-                className="absolute inset-0 pointer-events-none"
-                style={{ zIndex: 1 }}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 0.06 }}
-                transition={{ duration: 1 }}
-            >
-                <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black" />
-                <Image
-                    src="/CAIPOnew.png"
-                    alt="CAIPO Background"
-                    fill
-                    className="object-contain scale-150 select-none"
-                    priority
-                    loading="eager"
-                />
-            </motion.div>
+            {/* Remove Background text "CAIPO" */}
+            {/* (Deleted the motion.div with the huge CAIPO text) */}
 
             {/* Main content container */}
             <div className="container mx-auto px-6 relative z-10">
@@ -257,50 +192,43 @@ export default function HeroSection() {
                         </motion.div>
                     </motion.div>
 
-                    {/* Device visualization - Optimized for performance */}
-                    <motion.div 
-                        className="w-full lg:w-3/5 flex justify-center"
-                        onMouseEnter={() => setIsHovered(true)}
-                        onMouseLeave={() => setIsHovered(false)}
-                        style={{ 
-                            perspective: 2000,
-                        }}
-                    >
-                        <motion.div
-                            ref={deviceRef}
-                            className="relative w-full max-w-2xl"
-                            style={{ scale: deviceScale }}
-                            data-testid="device-container"
-                        >
-                            <motion.div
-                                className="relative rounded-[60px] overflow-hidden backdrop-blur-sm bg-gradient-to-b from-white/10 to-white/5"
-                                style={{
-                                    transform: `perspective(1000px) rotateX(${deviceRotation.x}deg) rotateY(${deviceRotation.y}deg)`,
-                                    transition: 'transform 0.1s ease-out'
-                                }}
+                    {/* Device visualization - Slightly smaller and softer glow */}
+                    <div className="w-full flex justify-center items-center">
+                        <div className="relative flex justify-center items-center">
+                            <Image
+                                src="/Adobe Express - file.png"
+                                alt="CAIPO Device"
+                                width={3000}
+                                height={3000}
+                                className="w-[60vw] max-w-[1000px] h-auto object-contain drop-shadow-[0_0_40px_rgba(139,92,246,0.4)]"
+                                priority
+                                loading="eager"
+                            />
+                            {/* Animated, radiating, spinning glow overlay */}
+                            <div
+                                className="absolute inset-0 pointer-events-none rounded-full"
+                                style={{ zIndex: 2 }}
                             >
-                                <motion.div
-                                    className="relative z-10"
+                                <div className="absolute inset-0 w-full h-full rounded-full"
                                     style={{
-                                        transform: `perspective(1000px) rotateX(${deviceRotation.x * 0.5}deg) rotateY(${deviceRotation.y * 0.5}deg)`,
-                                        transition: 'transform 0.1s ease-out'
+                                        background: "conic-gradient(from 0deg, rgba(139,92,246,0.25) 0deg, rgba(96,165,250,0.15) 120deg, rgba(139,92,246,0.25) 240deg, transparent 360deg)",
+                                        filter: "blur(48px)",
+                                        opacity: 0.6,
                                     }}
-                                >
-                                    <Image
-                                        src="/CAIPOnew.png"
-                                        alt="CAIPO Device"
-                                        width={800}
-                                        height={800}
-                                        className="w-full h-auto object-contain p-8 brightness-125 contrast-125"
-                                        priority
-                                        loading="eager"
-                                    />
-                                </motion.div>
-                            </motion.div>
-                        </motion.div>
-                    </motion.div>
+                                />
+                                <div className="absolute inset-0 w-full h-full rounded-full"
+                                    style={{
+                                        background: "radial-gradient(circle, rgba(139,92,246,0.18) 0%, transparent 70%)",
+                                        filter: "blur(32px)",
+                                        opacity: 0.5,
+                                    }}
+                                />
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
+
 
             {/* SVG Filters */}
             <svg className="filters" width='0' height='0' style={{ position: 'absolute', zIndex: -1 }}>
@@ -388,6 +316,14 @@ export default function HeroSection() {
                 @keyframes onloadopacity {
                     24% { opacity: 0; }
                     100% { opacity: 1; }
+                }
+
+                @keyframes spin-slow {
+                    0% { transform: rotate(0deg);}
+                    100% { transform: rotate(360deg);}
+                }
+                .animate-spin-slow {
+                    animation: spin-slow 8s linear infinite;
                 }
             `}</style>
         </motion.section>
