@@ -1,0 +1,24 @@
+{
+  "default_branch": "master",
+  "branches": [
+    "Aditya's-branch",
+    "feature/custom-flomad-logo",
+    "main",
+    "master",
+    "vercel/react-server-components-cve-vu-v93sgz"
+  ],
+  "parent": {
+    "Aditya's-branch": "master",
+    "feature/custom-flomad-logo": "master",
+    "main": "master",
+    "master": null,
+    "vercel/react-server-components-cve-vu-v93sgz": "master"
+  },
+  "order": [
+    "master",
+    "Aditya's-branch",
+    "feature/custom-flomad-logo",
+    "main",
+    "vercel/react-server-components-cve-vu-v93sgz"
+  ]
+}
