@@ -100,12 +100,11 @@ export default function Navbar() {
                                 ))}
                             </div>
 
-                            <GlassButton 
-                                href="#get-caipo" 
-                                variant="nav"
-                            >
-                                Get CAIPO
-                            </GlassButton>
+                            <Link href="/#early-access">
+                                <GlassButton className="ml-4">
+                                    Get CAIPO
+                                </GlassButton>
+                            </Link>
                         </div>
 
                         {/* Mobile menu button */}
@@ -149,8 +148,7 @@ export default function Navbar() {
                             ))}
                             <div className="pt-2">
                                 <GlassButton 
-                                    href="#get-caipo" 
-                                    variant="nav"
+                                    href="/#early-access" 
                                     className="w-full text-center"
                                     onClick={() => setIsMobileMenuOpen(false)}
                                 >
