@@ -10,7 +10,7 @@ export default function EarlyAccessSection() {
     const source = pathname === '/' ? 'homepage' : pathname.slice(1)
 
     return (
-        <section id="early-access" className="py-24 bg-black relative overflow-hidden">
+        <div id="early-access">
             {/* Background elements */}
             <div className="absolute inset-0">
                 <div className="absolute inset-0 bg-gradient-to-b from-purple-500/5 via-transparent to-transparent" />
@@ -54,6 +54,6 @@ export default function EarlyAccessSection() {
                     </div>
                 </motion.div>
             </div>
-        </section>
+        </div>
     )
-} 
+}
