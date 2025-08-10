@@ -50,8 +50,10 @@
   opacity: 1;
 }
 
+/* Remove/fix the nav-indicator highlight effect */
 .nav-indicator {
-  position: absolute;
+  /* Remove the highlight effect by commenting out or deleting these styles: */
+  /* position: absolute;
   height: 100%;
   border-radius: 9999px;
   background: linear-gradient(90deg,
@@ -63,7 +65,8 @@
   backdrop-filter: blur(8px);
   box-shadow: 
     0 4px 12px rgba(0, 0, 0, 0.1),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1); */
+  display: none; /* Hide the indicator completely */
 }
 
 /* Gooey SVG Filter */
@@ -200,4 +203,4 @@
     calc((var(--y) - 50%) * 0.15)
   ) scale(1.05);
   z-index: 1;
-} 
+}
