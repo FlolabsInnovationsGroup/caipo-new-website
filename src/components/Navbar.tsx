@@ -83,27 +83,6 @@ export default function Navbar() {
 
                         {/* Desktop Navigation */}
                         <div className="hidden md:flex items-center space-x-8">
-                            {/* Floating pill indicator */}
-                            <div className="mr-32 relative">
-                                <motion.div
-                                    className="h-8 w-24 rounded-full bg-white/[0.08]"
-                                    animate={{
-                                        x: activeSection === 'home' ? -80 : activeSection === 'features' ? 160 : -80,
-                                        scale: activeSection === 'features' ? 1.1 : 1,
-                                        opacity: scrolled ? 0.8 : 0.5
-                                    }}
-                                    transition={{
-                                        type: "spring",
-                                        stiffness: 400,
-                                        damping: 30
-                                    }}
-                                    style={{
-                                        filter: 'blur(1px)',
-                                        backdropFilter: 'blur(4px)'
-                                    }}
-                                />
-                            </div>
-
                             {/* Nav Links */}
                             <div ref={navRef} className="flex items-center space-x-4">
                                 {navItems.map((item) => (

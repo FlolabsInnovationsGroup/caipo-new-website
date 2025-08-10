@@ -41,16 +41,11 @@ export default function PricingCard({
       
       <motion.div 
         ref={cardRef}
-        className={`relative rounded-2xl p-8 h-full flex flex-col ${
-          popular ? 'pt-12' : ''
-        }`}
+        className={`relative rounded-2xl p-8 h-full flex flex-col ${popular ? 'pt-12' : ''}`}
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: index * 0.1 }}
         viewport={{ once: true }}
-        onMouseMove={handleMouseMove}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
         style={{
           background: popular 
             ? 'rgba(255, 255, 255, 0.05)'
@@ -61,28 +56,6 @@ export default function PricingCard({
             : '1px solid rgba(255, 255, 255, 0.05)',
         }}
       >
-        {/* Glow effect */}
-        <div
-          className="absolute inset-0 opacity-0 transition-opacity duration-300 rounded-2xl"
-          style={{
-            opacity: isHovered ? 0.15 : 0,
-            background: `radial-gradient(circle at ${mousePosition.x}% ${mousePosition.y}%, rgba(139, 92, 246, 0.3), transparent 50%)`,
-          }}
-        />
-
-        {/* Border glow */}
-        <div
-          className="absolute inset-0 opacity-0 transition-opacity duration-300"
-          style={{
-            opacity: isHovered ? 1 : 0,
-            padding: '1px',
-            background: 'linear-gradient(90deg, rgba(139, 92, 246, 0.3), rgba(59, 130, 246, 0.3))',
-            borderRadius: 'inherit',
-            content: '""',
-            pointerEvents: 'none',
-          }}
-        />
-
         {popular && (
           <div className="absolute -top-6 left-1/2 -translate-x-1/2">
             <div className="relative">
@@ -105,8 +78,7 @@ export default function PricingCard({
                 price
               ) : (
                 <>
-                  ${price}
-                  <span className="text-lg text-gray-400">/mo</span>
+                  {price}
                 </>
               )}
             </div>
@@ -139,26 +111,7 @@ export default function PricingCard({
             <span className="ml-2">→</span>
           </GlassButton>
         </div>
-
-        {/* Shine effect */}
-        <div
-          className="absolute inset-0 opacity-0 transition-opacity duration-500"
-          style={{
-            opacity: isHovered ? 0.1 : 0,
-            background: 'linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent)',
-            transform: 'translateX(-100%)',
-            animation: isHovered ? 'shine 1.5s infinite' : 'none',
-          }}
-        />
       </motion.div>
-
-      <style jsx>{`
-        @keyframes shine {
-          100% {
-            transform: translateX(100%);
-          }
-        }
-      `}</style>
     </div>
   )
-} 
+}
