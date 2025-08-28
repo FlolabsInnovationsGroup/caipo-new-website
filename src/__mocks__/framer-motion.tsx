@@ -1,3 +1,4 @@
+// This mock should only be used during testing
 import React from 'react'
 
 const mockMotionComponent = React.forwardRef<HTMLDivElement, any>((props, ref) => {
@@ -12,6 +13,7 @@ const mockMotionComponent = React.forwardRef<HTMLDivElement, any>((props, ref) =
     whileTap,
     whileInView,
     viewport,
+    style,
     ...rest
   } = props
 
@@ -30,6 +32,7 @@ const mockMotionComponent = React.forwardRef<HTMLDivElement, any>((props, ref) =
         whileInView,
         viewport,
       })}
+      style={style}
       {...rest}
     >
       {children}
@@ -45,6 +48,8 @@ export const motion = {
   span: mockMotionComponent,
   p: mockMotionComponent,
   a: mockMotionComponent,
+  h1: mockMotionComponent,
+  section: mockMotionComponent,
 }
 
 export const AnimatePresence = ({ children }: { children: React.ReactNode }) => <>{children}</>
@@ -62,4 +67,6 @@ export const useScroll = () => ({
   scrollYProgress: { get: () => 0, onChange: jest.fn() },
 })
 
-export const useSpring = (value: number) => value 
+export const useTransform = (scrollY: any, input: number[], output: any[]) => output[0]
+
+export const useSpring = (value: number) => value

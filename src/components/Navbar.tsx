@@ -77,8 +77,15 @@ export default function Navbar() {
                 <div className="container mx-auto px-6">
                     <div className="flex items-center justify-between">
                         {/* Logo */}
-                        <Link href="/" className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-blue-400">
-                            CAIPO
+                        <Link href="/" className="flex items-center space-x-3">
+                            <img 
+                                src="/logo.svg" 
+                                alt="CAIPO Logo" 
+                                className="w-10 h-10"
+                            />
+                            <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-blue-400">
+                                CAIPO
+                            </span>
                         </Link>
 
                         {/* Desktop Navigation */}
