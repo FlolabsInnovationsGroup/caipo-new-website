@@ -3,7 +3,7 @@ import { TextEncoder, TextDecoder } from 'util'
 import { cleanup } from '@testing-library/react'
 
 // Polyfill TextEncoder/TextDecoder for Node.js environment
-global.TextEncoder = TextEncoder
+global.TextEncoder = TextEncoder as any
 global.TextDecoder = TextDecoder as any
 
 // Clean up after each test
