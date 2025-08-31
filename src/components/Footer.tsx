@@ -22,13 +22,20 @@ export default function Footer() {
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
                         {/* CAIPO Section with enhanced branding */}
                         <div className="space-y-6">
-                            <motion.h3 
-                                className="text-2xl font-bold bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent"
+                            <motion.div 
+                                className="flex items-center space-x-3"
                                 whileHover={{ scale: 1.05 }}
                                 transition={{ type: "spring", stiffness: 400 }}
                             >
-                                CAIPO
-                            </motion.h3>
+                                <img 
+                                    src="/logo.svg" 
+                                    alt="CAIPO Logo" 
+                                    className="w-8 h-8"
+                                />
+                                <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+                                    CAIPO
+                                </h3>
+                            </motion.div>
                             <p className="text-gray-300 text-sm leading-relaxed">
                                 Your next-generation AI assistant, designed to transform your productivity.
                             </p>
