@@ -29,7 +29,7 @@ export default function Footer() {
                                 transition={{ type: "spring", stiffness: 400 }}
                             >
                                 <Image 
-                                    src="/logo.svg" 
+                                    src="/logo.svg?v=2" 
                                     alt="CAIPO Logo" 
                                     width={32}
                                     height={32}

@@ -1,8 +1,11 @@
 // Service worker code
-const CACHE_NAME = 'caipo-static-v1';
+const CACHE_NAME = 'caipo-static-v2';
 const STATIC_ASSETS = [
   '/',
   '/offline',
+  '/logo.svg',
+  '/favicon.ico',
+  '/favicon.svg',
   '/android-chrome-192x192.png',
   '/android-chrome-512x512.png',
   '/apple-touch-icon.png',
@@ -63,6 +66,26 @@ self.addEventListener('fetch', (event) => {
       fetch(event.request)
         .catch(() => {
           return caches.match('/offline');
+        })
+    );
+    return;
+  }
+
+  // Network-first strategy for SVG files to ensure fresh content
+  if (url.pathname.endsWith('.svg')) {
+    event.respondWith(
+      fetch(event.request)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            return caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, networkResponse.clone());
+              return networkResponse;
+            });
+          }
+          return networkResponse;
+        })
+        .catch(() => {
+          return caches.match(event.request);
         })
     );
     return;

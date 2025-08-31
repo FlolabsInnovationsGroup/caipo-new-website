@@ -66,6 +66,7 @@ export default function EarlyAccessForm({ source = 'unknown' }: EarlyAccessFormP
             placeholder="Enter your email"
             className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-400 text-white"
             disabled={isSubmitting}
+            suppressHydrationWarning={true}
           />
           <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-purple-500/10 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10" />
         </div>

@@ -17,8 +17,8 @@ export function generateMetadata({
     title,
     description,
     path,
-    ogImage = '/og-image.jpg',
-    twitterImage = '/twitter-image.jpg',
+    ogImage = '/social-link.png',
+    twitterImage = '/social-link.png',
     type = 'website',
     publishedTime,
     modifiedTime,
@@ -55,7 +55,7 @@ export function generateMetadata({
             title,
             description,
             images: [twitterImage],
-            creator: '@caipoai',
+            creator: '@CAIPO',
         },
         alternates: {
             canonical: url,
@@ -91,7 +91,7 @@ export function generateStructuredDataString(props: StructuredDataProps): string
             name: 'CAIPO',
             logo: {
                 '@type': 'ImageObject',
-                url: 'https://caipo.ai/logo.png',
+                url: 'https://caipo.ai/logo.svg',
             },
         },
     }

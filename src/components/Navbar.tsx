@@ -79,7 +79,7 @@ export default function Navbar() {
                         {/* Logo */}
                         <Link href="/" className="flex items-center space-x-3">
                             <img 
-                                src="/logo.svg" 
+                                src="/logo.svg?v=2"
                                 alt="CAIPO Logo" 
                                 className="w-10 h-10"
                             />
@@ -147,7 +147,7 @@ export default function Navbar() {
                                 <Link
                                     key={item.label}
                                     href={item.href}
-                                    className="block px-4 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-white/5 transition-all duration-300"
+                                    className="block px-4 py-2 text-gray-300 transition-all duration-300 rounded-xl hover:text-white hover:bg-white/5"
                                     onClick={() => setIsMobileMenuOpen(false)}
                                 >
                                     {item.label}

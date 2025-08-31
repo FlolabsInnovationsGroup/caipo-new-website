@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import '@/styles/glass.css'
 
@@ -23,6 +23,12 @@ export default function GlassButton({
     variant = 'default',
     type = 'button'
 }: GlassButtonProps) {
+    const [isClient, setIsClient] = useState(false)
+
+    useEffect(() => {
+        setIsClient(true)
+    }, [])
+
     const buttonClasses = `
         ${variant === 'nav' ? 'nav-button' : variant === 'secondary' ? 'glass-button-secondary' : 'glass-button'}
         ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
@@ -37,7 +43,8 @@ export default function GlassButton({
     const commonProps = {
         className: buttonClasses,
         onClick: handleClick,
-        'aria-disabled': disabled
+        'aria-disabled': disabled,
+        suppressHydrationWarning: true
     }
 
     if (href && !disabled) {
@@ -45,6 +52,7 @@ export default function GlassButton({
             <Link
                 href={href}
                 {...commonProps}
+                suppressHydrationWarning={true}
             >
                 {children}
             </Link>
@@ -56,6 +64,7 @@ export default function GlassButton({
             {...commonProps}
             type={type}
             disabled={disabled}
+            suppressHydrationWarning={true}
         >
             {children}
         </button>

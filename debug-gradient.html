@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<ht        <svg width="300" height="60">
+            <defs>
+                <linearGradient id="testGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#a855f7;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#60a5fa;stop-opacity:1" />
+                </linearGradient>
+            </defs>
+            <text x="10" y="40" font-family="Arial" font-size="32" font-weight="bold" fill="url(#testGradient)">
+                CAIPO SVG
+            </text>
+        </svg>
+    <title>Gradient Debug</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-black p-8">
+    <h1 class="text-white mb-8">Gradient Color Comparison</h1>
+    
+    <!-- Text with Tailwind gradient -->
+    <div class="mb-8">
+        <h2 class="text-white mb-4">Text with Tailwind gradient (from-purple-400 to-blue-400):</h2>
+        <span class="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-blue-400">
+            CAIPO TEXT
+        </span>
+    </div>
+    
+    <!-- SVG with same gradient colors -->
+    <div class="mb-8">
+        <h2 class="text-white mb-4">SVG with same gradient colors (#a855f7 to #60a5fa):</h2>
+        <svg width="200" height="60" viewBox="0 0 200 60">
+            <defs>
+                <linearGradient id="testGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#a855f7;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#60a5fa;stop-opacity:1" />
+                </linearGradient>
+            </defs>
+            <text x="10" y="40" font-family="Arial" font-size="32" font-weight="bold" fill="url(#testGradient)">
+                CAIPO SVG
+            </text>
+        </svg>
+    </div>
+    
+    <!-- Our logo -->
+    <div class="mb-8">
+        <h2 class="text-white mb-4">Our logo.svg:</h2>
+        <img src="/logo.svg" alt="CAIPO Logo" class="w-16 h-16" />
+    </div>
+    
+    <!-- Side by side comparison -->
+    <div class="mb-8">
+        <h2 class="text-white mb-4">Side by side comparison:</h2>
+        <div class="flex items-center space-x-4">
+            <img src="/logo.svg" alt="CAIPO Logo" class="w-12 h-12" />
+            <span class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-blue-400">
+                CAIPO
+            </span>
+        </div>
+    </div>
+    
+    <!-- Color values -->
+    <div class="text-white">
+        <h2 class="mb-4">Color values:</h2>
+        <p>purple-400: #a855f7</p>
+        <p>blue-400: #60a5fa</p>
+        <div class="mt-4 flex space-x-4">
+            <div class="w-16 h-16 rounded" style="background: #a855f7;"></div>
+            <div class="w-16 h-16 rounded" style="background: #60a5fa;"></div>
+        </div>
+    </div>
+</body>
+</html>
