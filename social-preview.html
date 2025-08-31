@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAIPO - Social Preview</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 1200px;
+            height: 630px;
+            background: #000000;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 60px 80px;
+            position: relative;
+            overflow: hidden;
+            color: rgb(255, 255, 255);
+        }
+
+        /* Background Elements - Exact match to homepage */
+        .background-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .purple-glow {
+            position: absolute;
+            top: 0;
+            left: 25%;
+            width: 500px;
+            height: 500px;
+            background: rgb(147, 51, 234, 0.2);
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.3;
+        }
+
+        .blue-glow {
+            position: absolute;
+            bottom: 0;
+            right: 25%;
+            width: 500px;
+            height: 500px;
+            background: rgb(59, 130, 246, 0.2);
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.3;
+        }
+
+        .left-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            z-index: 2;
+            flex: 1;
+        }
+
+        .text-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .meet-text {
+            font-size: 56px;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.2;
+            margin-bottom: 0px;
+        }
+
+        .caipo-text {
+            font-size: 96px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #a855f7, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+            position: relative;
+            display: inline-block;
+        }
+
+        .caipo-text::before {
+            content: 'CAIPO';
+            position: absolute;
+            pointer-events: none;
+            inset: 0;
+            color: #fff;
+            background: linear-gradient(180deg, #fff, rgba(139, 92, 246, 1));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: url(#glow-4);
+            -webkit-filter: url(#glow-4);
+            opacity: 1;
+        }
+
+        .logo-container {
+            width: 120px;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .right-section {
+            z-index: 2;
+        }
+
+        .caipo-image {
+            width: 450px;
+            height: 450px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 40px rgba(139, 92, 246, 0.4));
+            position: relative;
+        }
+
+        .image-container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Animated glow overlay - exact match to homepage */
+        .glow-overlay {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            border-radius: 50%;
+            z-index: 2;
+        }
+
+        .conic-glow {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, rgba(139,92,246,0.25) 0deg, rgba(96,165,250,0.15) 120deg, rgba(139,92,246,0.25) 240deg, transparent 360deg);
+            filter: blur(48px);
+            opacity: 0.6;
+            animation: spin 8s linear infinite;
+        }
+
+        .radial-glow {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(139,92,246,0.18) 0%, transparent 70%);
+            filter: blur(32px);
+            opacity: 0.5;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Elements - Exact match to homepage -->
+    <div class="background-elements">
+        <div class="purple-glow"></div>
+        <div class="blue-glow"></div>
+    </div>
+
+    <div class="left-section">
+        <div class="text-content">
+            <div class="meet-text">Meet</div>
+            <div class="caipo-text">CAIPO</div>
+        </div>
+        
+        <div class="logo-container">
+            <img src="./public/logo.svg" alt="CAIPO Logo">
+        </div>
+    </div>
+
+    <div class="right-section">
+        <div class="image-container">
+            <img src="./public/Adobe Express - file.png" alt="CAIPO Device" class="caipo-image">
+            <!-- Animated glow overlay -->
+            <div class="glow-overlay">
+                <div class="conic-glow"></div>
+                <div class="radial-glow"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SVG Filters for CAIPO text glow -->
+    <svg class="filters" width='0' height='0' style="position: absolute; z-index: -1;">
+        <defs>
+            <filter id="glow-4" colorInterpolationFilters="sRGB" x="-50%" y="-200%" width="200%" height="500%">
+                <!-- Core glow -->
+                <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur2"/>
+                <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur6"/>
+                <feGaussianBlur in="SourceGraphic" stdDeviation="12" result="blur12"/>
+                <feGaussianBlur in="SourceGraphic" stdDeviation="24" result="blur24"/>
+                <feGaussianBlur in="SourceGraphic" stdDeviation="36" result="blur36"/>
+                
+                <!-- Intense white core -->
+                <feColorMatrix in="blur2" result="white-glow" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0"/>
+                <feOffset in="white-glow" result="white-glow-moved" dx="0" dy="0"/>
+                
+                <!-- Bright purple inner glow -->
+                <feColorMatrix in="blur6" result="purple-glow-1" type="matrix" values="0.7 0 0 0 0  0 0.3 0 0 0  1 0 1 0 0  0 0 0 1 0"/>
+                <feOffset in="purple-glow-1" result="purple-glow-1-moved" dx="0" dy="0"/>
+                
+                <!-- Mid purple glow -->
+                <feColorMatrix in="blur12" result="purple-glow-2" type="matrix" values="0.6 0 0 0 0  0 0.2 0 0 0  1 0 1 0 0  0 0 0 0.8 0"/>
+                <feOffset in="purple-glow-2" result="purple-glow-2-moved" dx="0" dy="1"/>
+                
+                <!-- Blue mid glow -->
+                <feColorMatrix in="blur24" result="blue-glow" type="matrix" values="0.2 0 0 0 0  0 0.5 0 0 0  1 0 1 0 0  0 0 0 0.6 0"/>
+                <feOffset in="blue-glow" result="blue-glow-moved" dx="0" dy="2"/>
+                
+                <!-- Soft outer glow -->
+                <feColorMatrix in="blur36" result="outer-glow" type="matrix" values="0.5 0 0 0 0  0 0.3 0 0 0  1 0 1 0 0  0 0 0 0.4 0"/>
+                <feOffset in="outer-glow" result="outer-glow-moved" dx="0" dy="3"/>
+                
+                <feMerge>
+                    <feMergeNode in="outer-glow-moved"/>
+                    <feMergeNode in="blue-glow-moved"/>
+                    <feMergeNode in="purple-glow-2-moved"/>
+                    <feMergeNode in="purple-glow-1-moved"/>
+                    <feMergeNode in="white-glow-moved"/>
+                    <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+            </filter>
+        </defs>
+    </svg>
+</body>
+</html>
