@@ -28,7 +28,7 @@ const baseOrganization: Organization = {
   ]
 }
 
-export function generateOrganizationSchema(org: Partial<Organization> = {}): Record<string, any> {
+export function generateOrganizationSchema(org: Partial<Organization> = {}): Record<string, unknown> {
   return {
     '@context': 'https://schema.org',
     '@type': 'Organization',
@@ -37,7 +37,7 @@ export function generateOrganizationSchema(org: Partial<Organization> = {}): Rec
   }
 }
 
-export function generateSoftwareApplicationSchema(app: SoftwareApplication): Record<string, any> {
+export function generateSoftwareApplicationSchema(app: SoftwareApplication): Record<string, unknown> {
   return {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
@@ -54,7 +54,7 @@ export function generateSoftwareApplicationSchema(app: SoftwareApplication): Rec
   }
 }
 
-export function generateBreadcrumbSchema(items: { name: string; url: string }[]): Record<string, any> {
+export function generateBreadcrumbSchema(items: { name: string; url: string }[]): Record<string, unknown> {
   return {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -67,7 +67,7 @@ export function generateBreadcrumbSchema(items: { name: string; url: string }[])
   }
 }
 
-export function generateFAQSchema(questions: { question: string; answer: string }[]): Record<string, any> {
+export function generateFAQSchema(questions: { question: string; answer: string }[]): Record<string, unknown> {
   return {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
@@ -96,7 +96,7 @@ export function generateArticleSchema({
   datePublished: string
   dateModified: string
   author: string
-}): Record<string, any> {
+}): Record<string, unknown> {
   return {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -125,7 +125,7 @@ export function generateProductSchema({
   image: string
   price: number
   currency?: string
-}): Record<string, any> {
+}): Record<string, unknown> {
   return {
     '@context': 'https://schema.org',
     '@type': 'Product',

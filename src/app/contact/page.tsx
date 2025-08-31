@@ -48,7 +48,7 @@ export default function Contact() {
               Get in Touch
             </h1>
             <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-              Have questions? We're here to help.
+              Have questions? We&apos;re here to help.
             </p>
           </motion.div>
 
@@ -62,9 +62,11 @@ export default function Contact() {
             >
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium mb-2">Name</label>
+                  <label htmlFor="contact-name" className="block text-sm font-medium mb-2">Name</label>
                   <input
+                    id="contact-name"
                     type="text"
+                    placeholder="Enter your full name"
                     className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
                     required
                     value={formData.name}
@@ -72,9 +74,11 @@ export default function Contact() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-2">Email</label>
+                  <label htmlFor="contact-email" className="block text-sm font-medium mb-2">Email</label>
                   <input
+                    id="contact-email"
                     type="email"
+                    placeholder="Enter your email address"
                     className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
                     required
                     value={formData.email}
@@ -82,9 +86,11 @@ export default function Contact() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-2">Subject</label>
+                  <label htmlFor="contact-subject" className="block text-sm font-medium mb-2">Subject</label>
                   <input
+                    id="contact-subject"
                     type="text"
+                    placeholder="Enter the subject of your message"
                     className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
                     required
                     value={formData.subject}
@@ -92,8 +98,10 @@ export default function Contact() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-2">Message</label>
+                  <label htmlFor="contact-message" className="block text-sm font-medium mb-2">Message</label>
                   <textarea
+                    id="contact-message"
+                    placeholder="Enter your message here..."
                     className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500 h-32"
                     required
                     value={formData.message}

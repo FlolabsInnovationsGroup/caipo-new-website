@@ -11,6 +11,11 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
+  {
+    rules: {
+      "no-inline-styles": "off", // Allow inline styles for dynamic CSS properties
+    },
+  },
 ];
 
 export default eslintConfig;

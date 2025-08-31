@@ -128,7 +128,7 @@ export default function Privacy() {
                         </h2>
                         <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8">
                             If you have any questions about our privacy policy or how we handle your data, 
-                            please don't hesitate to contact our privacy team.
+                            please don&apos;t hesitate to contact our privacy team.
                         </p>
                         <a 
                             href="mailto:privacy@caipo.ai"

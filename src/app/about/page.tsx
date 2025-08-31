@@ -37,7 +37,7 @@ export default function About() {
                             About CAIPO
                         </h1>
                         <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto">
-                            We're building the next generation of AI assistance, designed to transform how you interact with technology.
+                            We&apos;re building the next generation of AI assistance, designed to transform how you interact with technology.
                         </p>
                     </motion.div>
                 </div>
@@ -59,10 +59,10 @@ export default function About() {
                                 CAIPO began with a simple question: How can we make AI more accessible and helpful in everyday life? Our vision is to create an AI assistant that seamlessly integrates into your workflow, making technology work for you, not the other way around.
                             </p>
                             <p>
-                                Currently in active development, CAIPO is being built with a focus on natural interaction, privacy, and genuine utility. We're combining cutting-edge AI technology with intuitive design to create an assistant that truly understands and adapts to your needs.
+                                Currently in active development, CAIPO is being built with a focus on natural interaction, privacy, and genuine utility. We&apos;re combining cutting-edge AI technology with intuitive design to create an assistant that truly understands and adapts to your needs.
                             </p>
                             <p>
-                                We believe in transparency and building in public. As we develop CAIPO, we're committed to sharing our progress and gathering feedback from our community to create something truly valuable.
+                                We believe in transparency and building in public. As we develop CAIPO, we&apos;re committed to sharing our progress and gathering feedback from our community to create something truly valuable.
                             </p>
                         </div>
                     </motion.div>

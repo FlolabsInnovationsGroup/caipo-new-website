@@ -87,7 +87,7 @@ export default function Terms() {
                             Terms of Service
                         </h1>
                         <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-                            Please read these terms carefully before using CAIPO's services.
+                            Please read these terms carefully before using CAIPO&apos;s services.
                         </p>
                     </motion.div>
 

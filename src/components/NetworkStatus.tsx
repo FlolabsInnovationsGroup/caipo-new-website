@@ -77,7 +77,7 @@ export default function NetworkStatus() {
             ) : (
               <>
                 <WifiOffIcon />
-                <span className="text-sm font-medium">You're Offline</span>
+                <span className="text-sm font-medium">You&apos;re Offline</span>
               </>
             )}
           </div>

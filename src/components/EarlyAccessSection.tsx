@@ -49,7 +49,7 @@ export default function EarlyAccessSection() {
                         </div>
                         <div className="text-center">
                             <h3 className="text-lg font-semibold mb-2">Shape the Future</h3>
-                            <p className="text-gray-400">Help influence CAIPO's development direction</p>
+                            <p className="text-gray-400">Help influence CAIPO&apos;s development direction</p>
                         </div>
                     </div>
                 </motion.div>

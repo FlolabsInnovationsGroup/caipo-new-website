@@ -4,7 +4,7 @@
 declare const self: ServiceWorkerGlobalScope;
 
 interface ExtendableEvent extends Event {
-  waitUntil(promise: Promise<any>): void;
+  waitUntil(promise: Promise<unknown>): void;
 }
 
 interface NotificationAction {

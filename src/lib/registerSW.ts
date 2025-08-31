@@ -10,8 +10,11 @@ export async function registerServiceWorker() {
     await registration.update();
     
     // Register for background sync
-    if ('sync' in registration && 'register' in (registration as any).sync) {
-      await (registration as ServiceWorkerRegistration & { sync: { register: (tag: string) => Promise<void> } }).sync.register('sync-requests');
+    if ('sync' in registration) {
+      const syncRegistration = registration as ServiceWorkerRegistration & { sync?: { register: (tag: string) => Promise<void> } };
+      if (syncRegistration.sync && 'register' in syncRegistration.sync) {
+        await syncRegistration.sync.register('sync-requests');
+      }
     }
     
     // Request notification permission

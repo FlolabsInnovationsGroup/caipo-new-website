@@ -27,10 +27,10 @@ export default function PerformanceMonitor() {
 
     // Track memory usage if available
     if ('memory' in window.performance) {
-      const memory = (window.performance as any).memory
+      const memory = (window.performance as Performance & { memory?: { usedJSHeapSize: number } }).memory
       trackWebVitals({
         name: 'heap_size',
-        delta: memory.usedJSHeapSize,
+        delta: memory?.usedJSHeapSize || 0,
         id: 'heap',
       })
     }

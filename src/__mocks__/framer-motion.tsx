@@ -1,7 +1,25 @@
 // This mock should only be used during testing
 import React from 'react'
 
-const mockMotionComponent = React.forwardRef<HTMLDivElement, any>((props, ref) => {
+interface MockMotionProps {
+  children?: React.ReactNode
+  initial?: Record<string, unknown>
+  animate?: Record<string, unknown>
+  exit?: Record<string, unknown>
+  transition?: Record<string, unknown>
+  variants?: Record<string, unknown>
+  whileHover?: Record<string, unknown>
+  whileTap?: Record<string, unknown>
+  whileInView?: Record<string, unknown>
+  viewport?: Record<string, unknown>
+  style?: React.CSSProperties
+  className?: string
+  onClick?: () => void
+  onMouseMove?: (e: React.MouseEvent) => void
+  [key: string]: unknown
+}
+
+const mockMotionComponent = React.forwardRef<HTMLDivElement, MockMotionProps>((props, ref) => {
   const {
     children,
     initial,
@@ -32,10 +50,10 @@ const mockMotionComponent = React.forwardRef<HTMLDivElement, any>((props, ref) =
         whileInView,
         viewport,
       })}
-      style={style}
-      {...rest}
+      style={style as React.CSSProperties}
+      {...(rest as Record<string, unknown>)}
     >
-      {children}
+      {children as React.ReactNode}
     </div>
   )
 })
@@ -67,6 +85,6 @@ export const useScroll = () => ({
   scrollYProgress: { get: () => 0, onChange: jest.fn() },
 })
 
-export const useTransform = (scrollY: any, input: number[], output: any[]) => output[0]
+export const useTransform = (scrollY: unknown, input: number[], output: unknown[]) => output[0]
 
 export const useSpring = (value: number) => value

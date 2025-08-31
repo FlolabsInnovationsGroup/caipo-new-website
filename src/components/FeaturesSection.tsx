@@ -71,7 +71,7 @@ export default function FeaturesSection() {
                         viewport={{ once: true }}
                         transition={{ duration: 0.6, delay: 0.2 }}
                     >
-                        CAIPO is being developed with cutting-edge features to revolutionize how you interact with AI. Here's what we're working on:
+                        CAIPO is being developed with cutting-edge features to revolutionize how you interact with AI. Here&apos;s what we&apos;re working on:
                     </motion.p>
                 </div>
 

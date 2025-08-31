@@ -45,7 +45,7 @@ export default class ErrorBoundary extends React.Component<Props, State> {
               Something went wrong
             </h2>
             <p className="text-gray-400 mb-8">
-              We've been notified and will fix this as soon as possible.
+              We&apos;ve been notified and will fix this as soon as possible.
               In the meantime, you can try refreshing the page.
             </p>
             <div className="space-x-4">

@@ -11,7 +11,7 @@ export interface ErrorContext {
   componentName?: string
   userId?: string
   action?: string
-  additionalData?: Record<string, any>
+  additionalData?: Record<string, unknown>
 }
 
 class ErrorLogger {

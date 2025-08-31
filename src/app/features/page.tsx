@@ -146,7 +146,7 @@ export default function Features() {
                                 CAIPO Features
                             </h1>
                             <p className="text-xl text-gray-300 mb-8">
-                                Discover the capabilities we're building to transform your daily interactions with technology
+                                Discover the capabilities we&apos;re building to transform your daily interactions with technology
                             </p>
                         </motion.div>
                     </div>

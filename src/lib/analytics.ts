@@ -3,7 +3,7 @@ declare global {
     gtag: (
       command: 'config' | 'event',
       targetId: string,
-      config?: Record<string, any>
+      config?: Record<string, unknown>
     ) => void
   }
 }
@@ -44,7 +44,7 @@ interface EventParams {
   metric_id?: string
   engagement_type?: string
   engagement_value?: number
-  [key: string]: any
+  [key: string]: unknown
 }
 
 export function trackEvent(

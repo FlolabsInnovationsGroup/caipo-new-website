@@ -9,16 +9,16 @@ export default function OfflinePage() {
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="max-w-2xl w-full">
         <GlassCard
-          title="You're Offline"
+          title="You&apos;re Offline"
           description="Don't worry! You can still access previously visited pages."
           icon={<WifiOff className="w-8 h-8 text-purple-400" />}
         >
           <div className="mt-8 space-y-6">
             <div className="text-gray-300 space-y-4">
-              <p>Here's what you can do:</p>
+              <p>Here&apos;s what you can do:</p>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>Check your internet connection</li>
-                <li>Try refreshing the page once you're back online</li>
+                <li>Try refreshing the page once you&apos;re back online</li>
                 <li>Access any previously visited pages from the navigation menu</li>
               </ul>
             </div>
