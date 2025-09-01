@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     siteName: 'CAIPO',
     images: [
       {
-        url: '/social-link.png',
+        url: '/social-preview-new.png?v=2',
         width: 1200,
         height: 630,
         alt: 'CAIPO - AI-Powered Productivity Assistant',
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'CAIPO - AI-Powered Productivity Assistant',
     description: 'CAIPO is your AI-powered productivity assistant, helping you work smarter and achieve more.',
-    images: ['/social-link.png'],
+    images: ['/social-preview-new.png?v=2'],
     creator: '@CAIPO',
     site: '@CAIPO',
   },
