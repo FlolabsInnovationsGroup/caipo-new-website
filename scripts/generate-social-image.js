@@ -17,7 +17,7 @@ async function generateSocialImage() {
   
   // Take screenshot
   await page.screenshot({
-    path: path.join(__dirname, '../public/social-link.png'),
+    path: path.join(__dirname, '../public/social-og-image.png'),
     width: 1200,
     height: 630,
     clip: { x: 0, y: 0, width: 1200, height: 630 }
