@@ -1,6 +1,6 @@
 # CAIPO Landing Page
 
-A modern, responsive landing page for CAIPO built with Next.js 14, TypeScript, and Tailwind CSS.
+A modern and responsive landing page for CAIPO built with Next.js 14, TypeScript, and Tailwind CSS.
 
 ## Features
 
