@@ -1,0 +1,1 @@
+export default function Features() { return <main style={{background:"#050508",minHeight:"100vh",color:"#f0f0f5",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"Syne,sans-serif"}}><h1>Features coming soon</h1></main> }
